@@ -23,8 +23,10 @@ interface PrescriptionResult {
 export default function UploadPrescription() {
   const [file, setFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<PrescriptionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -49,8 +51,8 @@ export default function UploadPrescription() {
   const handleFile = async (f: File) => {
     setFile(f);
     setProcessing(true);
-    setResult(null);
     setError(null);
+    setSaved(false);
 
     try {
       const imageBase64 = await fileToBase64(f);
@@ -282,8 +284,53 @@ export default function UploadPrescription() {
                   </div>
                 </div>
 
-                <Button className="w-full gradient-primary text-primary-foreground">
-                  Save Prescription
+                <Button
+                  className="w-full gradient-primary text-primary-foreground"
+                  disabled={saving || saved}
+                  onClick={async () => {
+                    if (!result) return;
+                    setSaving(true);
+                    try {
+                      // Insert prescription
+                      const { data: rxData, error: rxError } = await supabase
+                        .from("prescriptions")
+                        .insert({
+                          doctor_name: result.doctorName,
+                          hospital_name: result.hospitalName,
+                          date: result.date,
+                          summary: result.summary || null,
+                        })
+                        .select("id")
+                        .single();
+
+                      if (rxError) throw rxError;
+
+                      // Insert medicines
+                      const medsToInsert = result.medicines.map((med) => ({
+                        prescription_id: rxData.id,
+                        medicine_name: med.name,
+                        dosage: med.dosage,
+                        timing: med.timing,
+                        food_instruction: med.food,
+                      }));
+
+                      const { error: medError } = await supabase
+                        .from("medicines")
+                        .insert(medsToInsert);
+
+                      if (medError) throw medError;
+
+                      setSaved(true);
+                      toast.success("Prescription saved successfully!");
+                    } catch (err) {
+                      const msg = err instanceof Error ? err.message : "Failed to save";
+                      toast.error(msg);
+                    } finally {
+                      setSaving(false);
+                    }
+                  }}
+                >
+                  {saved ? "✓ Saved" : saving ? "Saving..." : "Save Prescription"}
                 </Button>
               </CardContent>
             </Card>
