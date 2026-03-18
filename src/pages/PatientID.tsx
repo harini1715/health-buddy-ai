@@ -1,10 +1,57 @@
 import { motion } from "framer-motion";
-import { Heart, UserCircle, Download } from "lucide-react";
+import { Heart, UserCircle, Download, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { mockPatient } from "@/data/mockData";
+import { QRCodeSVG } from "qrcode.react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function PatientID() {
+  const { data: prescriptions, isLoading } = useQuery({
+    queryKey: ["all-prescriptions-for-qr"],
+    queryFn: async () => {
+      const { data: rxData, error } = await supabase
+        .from("prescriptions")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+
+      const withMeds = await Promise.all(
+        (rxData || []).map(async (rx) => {
+          const { data: meds } = await supabase
+            .from("medicines")
+            .select("*")
+            .eq("prescription_id", rx.id);
+          return {
+            doctor: rx.doctor_name,
+            hospital: rx.hospital_name,
+            date: rx.date,
+            medicines: (meds || []).map((m) => ({
+              name: m.medicine_name,
+              dosage: m.dosage,
+              timing: m.timing,
+              food: m.food_instruction,
+            })),
+          };
+        })
+      );
+      return withMeds;
+    },
+  });
+
+  const qrData = JSON.stringify({
+    patient: {
+      id: mockPatient.id,
+      name: mockPatient.name,
+      age: mockPatient.age,
+      gender: mockPatient.gender,
+      bloodGroup: mockPatient.bloodGroup,
+      contact: mockPatient.contactNumber,
+    },
+    prescriptions: prescriptions || [],
+  });
+
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -66,19 +113,28 @@ export default function PatientID() {
               <InfoRow label="Address" value={mockPatient.address} />
             </div>
 
-            {/* QR Placeholder */}
+            {/* QR Code */}
             <div className="mt-5 flex items-center justify-between p-4 rounded-xl bg-muted/50">
               <div>
-                <p className="text-xs text-muted-foreground">
-                  Scan for quick access
+                <p className="text-xs text-muted-foreground font-semibold">
+                  Scan for full details
                 </p>
                 <p className="text-[10px] text-muted-foreground/60 mt-0.5">
-                  QR code coming soon
+                  Includes patient info & prescriptions
                 </p>
               </div>
-              <div className="h-16 w-16 rounded-lg border-2 border-dashed border-border flex items-center justify-center">
-                <span className="text-[10px] text-muted-foreground">QR</span>
-              </div>
+              {isLoading ? (
+                <div className="h-24 w-24 flex items-center justify-center">
+                  <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                </div>
+              ) : (
+                <QRCodeSVG
+                  value={qrData}
+                  size={96}
+                  level="L"
+                  className="rounded-lg"
+                />
+              )}
             </div>
           </CardContent>
         </Card>
