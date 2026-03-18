@@ -1,25 +1,30 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, FileImage, Loader2, CheckCircle2, Sparkles } from "lucide-react";
+import { Upload, FileImage, Loader2, CheckCircle2, Sparkles, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-const mockOCRResult = {
-  date: "2026-03-18",
-  hospitalName: "Max Super Speciality Hospital",
-  doctorName: "Dr. Ananya Verma",
-  medicines: [
-    { name: "Azithromycin 500mg", dosage: "1 tablet", timing: "Morning", food: "After food" },
-    { name: "Montelukast 10mg", dosage: "1 tablet", timing: "Night", food: "Before food" },
-    { name: "Salbutamol Inhaler", dosage: "2 puffs", timing: "Morning & Night", food: "N/A" },
-  ],
-};
+interface PrescriptionResult {
+  date: string;
+  hospitalName: string;
+  doctorName: string;
+  summary?: string;
+  medicines: {
+    name: string;
+    dosage: string;
+    timing: string;
+    food: string;
+  }[];
+}
 
 export default function UploadPrescription() {
   const [file, setFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
-  const [result, setResult] = useState<typeof mockOCRResult | null>(null);
+  const [result, setResult] = useState<PrescriptionResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -27,14 +32,53 @@ export default function UploadPrescription() {
     if (f) handleFile(f);
   };
 
-  const handleFile = (f: File) => {
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        // Remove data URL prefix
+        const base64 = result.split(",")[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFile = async (f: File) => {
     setFile(f);
     setProcessing(true);
     setResult(null);
-    setTimeout(() => {
+    setError(null);
+
+    try {
+      const imageBase64 = await fileToBase64(f);
+
+      const { data, error: fnError } = await supabase.functions.invoke(
+        "analyze-prescription",
+        {
+          body: { imageBase64, mimeType: f.type },
+        }
+      );
+
+      if (fnError) {
+        throw new Error(fnError.message || "Failed to analyze prescription");
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      setResult(data as PrescriptionResult);
+      toast.success("Prescription analyzed successfully!");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to process prescription";
+      setError(msg);
+      toast.error(msg);
+    } finally {
       setProcessing(false);
-      setResult(mockOCRResult);
-    }, 2500);
+    }
   };
 
   return (
@@ -77,7 +121,7 @@ export default function UploadPrescription() {
                 Drop your prescription here
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                or click to browse · JPG, PNG, PDF supported
+                or click to browse · JPG, PNG supported
               </p>
               {file && (
                 <div className="flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-accent">
@@ -104,11 +148,32 @@ export default function UploadPrescription() {
               <CardContent className="flex flex-col items-center py-12">
                 <Loader2 className="h-10 w-10 text-primary animate-spin" />
                 <p className="font-display font-semibold mt-4 text-foreground">
-                  Processing Prescription...
+                  Analyzing Prescription with AI...
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Running OCR & AI analysis (mock)
+                  Extracting text and structuring data
                 </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Error State */}
+      <AnimatePresence>
+        {error && !processing && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+          >
+            <Card className="shadow-card border-destructive/30">
+              <CardContent className="flex items-center gap-3 py-6">
+                <AlertCircle className="h-6 w-6 text-destructive shrink-0" />
+                <div>
+                  <p className="font-semibold text-foreground">Analysis Failed</p>
+                  <p className="text-sm text-muted-foreground">{error}</p>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
@@ -136,12 +201,22 @@ export default function UploadPrescription() {
                   <div className="flex items-center gap-1 mt-0.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-success" />
                     <span className="text-xs text-success">
-                      Successfully extracted
+                      Powered by Lovable AI
                     </span>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Summary */}
+                {result.summary && (
+                  <div className="p-4 rounded-xl gradient-accent">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                      AI Summary
+                    </p>
+                    <p className="text-sm text-foreground">{result.summary}</p>
+                  </div>
+                )}
+
                 {/* Prescription Info */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-3 rounded-xl bg-muted/50">
@@ -173,7 +248,7 @@ export default function UploadPrescription() {
                 {/* Medicines */}
                 <div>
                   <h3 className="font-display font-semibold text-foreground mb-3">
-                    Extracted Medicines
+                    Extracted Medicines ({result.medicines.length})
                   </h3>
                   <div className="space-y-2">
                     {result.medicines.map((med, i) => (
