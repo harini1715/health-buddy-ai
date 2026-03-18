@@ -1,36 +1,120 @@
 import { motion } from "framer-motion";
-import { Bell, Volume2, Check } from "lucide-react";
+import { Bell, Volume2, Check, Loader2, Pill } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { mockReminders } from "@/data/mockData";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useState, useMemo } from "react";
 
 type ReminderStatus = "upcoming" | "pending" | "done";
 
 interface Reminder {
-  id: number;
+  id: string;
   time: string;
   medicine: string;
+  dosage: string;
   instruction: string;
   status: ReminderStatus;
 }
 
+function buildReminders(medicines: { id: string; medicine_name: string; dosage: string; timing: string; food_instruction: string }[]): Reminder[] {
+  const reminders: Reminder[] = [];
+  const timingMap: Record<string, string> = {
+    Morning: "8:30 AM",
+    Afternoon: "2:00 PM",
+    Night: "9:00 PM",
+  };
+
+  for (const med of medicines) {
+    const timingStr = med.timing.toLowerCase();
+    const slots: { key: string; time: string }[] = [];
+
+    if (timingStr.includes("morning")) slots.push({ key: "morning", time: timingMap["Morning"] });
+    if (timingStr.includes("afternoon")) slots.push({ key: "afternoon", time: timingMap["Afternoon"] });
+    if (timingStr.includes("night")) slots.push({ key: "night", time: timingMap["Night"] });
+
+    // If no recognized timing, default to morning
+    if (slots.length === 0) slots.push({ key: "default", time: timingMap["Morning"] });
+
+    for (const slot of slots) {
+      reminders.push({
+        id: `${med.id}-${slot.key}`,
+        time: slot.time,
+        medicine: med.medicine_name,
+        dosage: med.dosage,
+        instruction: med.food_instruction || "N/A",
+        status: "pending",
+      });
+    }
+  }
+
+  // Sort by time
+  const timeOrder = ["8:30 AM", "2:00 PM", "9:00 PM"];
+  reminders.sort((a, b) => timeOrder.indexOf(a.time) - timeOrder.indexOf(b.time));
+
+  // Mark first group as "upcoming"
+  if (reminders.length > 0) {
+    const firstTime = reminders[0].time;
+    for (const r of reminders) {
+      if (r.time === firstTime) r.status = "upcoming";
+    }
+  }
+
+  return reminders;
+}
+
 export default function Reminders() {
-  const [reminders, setReminders] = useState<Reminder[]>(mockReminders as Reminder[]);
+  const { data: latestPrescription, isLoading } = useQuery({
+    queryKey: ["latest-prescription-reminders"],
+    queryFn: async () => {
+      // Get the latest prescription
+      const { data: rxData, error: rxError } = await supabase
+        .from("prescriptions")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (rxError) throw rxError;
+      if (!rxData) return null;
+
+      // Get its medicines
+      const { data: meds, error: medError } = await supabase
+        .from("medicines")
+        .select("*")
+        .eq("prescription_id", rxData.id);
+
+      if (medError) throw medError;
+
+      return { ...rxData, medicines: meds || [] };
+    },
+  });
+
+  const initialReminders = useMemo(() => {
+    if (!latestPrescription?.medicines?.length) return [];
+    return buildReminders(latestPrescription.medicines);
+  }, [latestPrescription]);
+
+  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
+
+  const reminders = useMemo(() => {
+    return initialReminders.map((r) => ({
+      ...r,
+      status: completedIds.has(r.id) ? ("done" as ReminderStatus) : r.status,
+    }));
+  }, [initialReminders, completedIds]);
 
   const speakReminder = (medicine: string, time: string, instruction: string) => {
     const msg = new SpeechSynthesisUtterance(
-      `Hi Chandry, it's ${time}. Please take ${medicine} ${instruction}.`
+      `Hi, it's ${time}. Please take ${medicine} ${instruction}.`
     );
     msg.rate = 0.9;
     speechSynthesis.speak(msg);
   };
 
-  const markDone = (id: number) => {
-    setReminders((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: "done" as const } : r))
-    );
+  const markDone = (id: string) => {
+    setCompletedIds((prev) => new Set(prev).add(id));
   };
 
   return (
@@ -44,96 +128,124 @@ export default function Reminders() {
         </p>
       </motion.div>
 
-      <Card className="shadow-card">
-        <CardHeader>
-          <CardTitle className="text-lg font-display">Today's Schedule</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {reminders.map((r, i) => (
-            <motion.div
-              key={r.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className={`flex items-center justify-between p-4 rounded-xl border transition-colors ${
-                r.status === "done"
-                  ? "bg-success/5 border-success/20 opacity-60"
-                  : "hover:bg-accent/30"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`h-10 w-10 rounded-xl flex items-center justify-center ${
+      {isLoading && (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-8 w-8 text-primary animate-spin" />
+        </div>
+      )}
+
+      {!isLoading && reminders.length === 0 && (
+        <Card className="shadow-card">
+          <CardContent className="flex flex-col items-center py-16">
+            <Pill className="h-12 w-12 text-muted-foreground/30 mb-4" />
+            <p className="font-display font-semibold text-foreground">No reminders yet</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Save a prescription to generate reminders
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {!isLoading && reminders.length > 0 && (
+        <>
+          {latestPrescription && (
+            <div className="p-4 rounded-xl gradient-accent">
+              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                Based on latest prescription
+              </p>
+              <p className="text-sm font-semibold text-foreground mt-1">
+                {latestPrescription.doctor_name} · {latestPrescription.hospital_name}
+              </p>
+              <p className="text-xs text-muted-foreground">{latestPrescription.date}</p>
+            </div>
+          )}
+
+          <Card className="shadow-card">
+            <CardHeader>
+              <CardTitle className="text-lg font-display">Today's Schedule</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {reminders.map((r, i) => (
+                <motion.div
+                  key={r.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className={`flex items-center justify-between p-4 rounded-xl border transition-colors ${
                     r.status === "done"
-                      ? "bg-success/10"
-                      : r.status === "upcoming"
-                      ? "gradient-primary"
-                      : "bg-muted"
+                      ? "bg-success/5 border-success/20 opacity-60"
+                      : "hover:bg-accent/30"
                   }`}
                 >
-                  {r.status === "done" ? (
-                    <Check className="h-5 w-5 text-success" />
-                  ) : (
-                    <Bell
-                      className={`h-4 w-4 ${
-                        r.status === "upcoming"
-                          ? "text-primary-foreground"
-                          : "text-muted-foreground"
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`h-10 w-10 rounded-xl flex items-center justify-center ${
+                        r.status === "done"
+                          ? "bg-success/10"
+                          : r.status === "upcoming"
+                          ? "gradient-primary"
+                          : "bg-muted"
                       }`}
-                    />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    {r.medicine}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {r.time} · {r.instruction}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge
-                  variant={
-                    r.status === "done"
-                      ? "default"
-                      : r.status === "upcoming"
-                      ? "default"
-                      : "secondary"
-                  }
-                  className={`text-[10px] ${
-                    r.status === "done" ? "bg-success text-success-foreground" : ""
-                  }`}
-                >
-                  {r.status === "done" ? "taken" : r.status}
-                </Badge>
-                {r.status !== "done" && (
-                  <>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() =>
-                        speakReminder(r.medicine, r.time, r.instruction)
-                      }
                     >
-                      <Volume2 className="h-3.5 w-3.5 text-muted-foreground" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-xs h-7"
-                      onClick={() => markDone(r.id)}
+                      {r.status === "done" ? (
+                        <Check className="h-5 w-5 text-success" />
+                      ) : (
+                        <Bell
+                          className={`h-4 w-4 ${
+                            r.status === "upcoming"
+                              ? "text-primary-foreground"
+                              : "text-muted-foreground"
+                          }`}
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        {r.medicine}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {r.time} · {r.dosage} · {r.instruction}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant={r.status === "upcoming" ? "default" : "secondary"}
+                      className={`text-[10px] ${
+                        r.status === "done" ? "bg-success text-success-foreground" : ""
+                      }`}
                     >
-                      Mark Done
-                    </Button>
-                  </>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </CardContent>
-      </Card>
+                      {r.status === "done" ? "taken" : r.status}
+                    </Badge>
+                    {r.status !== "done" && (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() =>
+                            speakReminder(r.medicine, r.time, r.instruction)
+                          }
+                        >
+                          <Volume2 className="h-3.5 w-3.5 text-muted-foreground" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs h-7"
+                          onClick={() => markDone(r.id)}
+                        >
+                          Mark Done
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }
