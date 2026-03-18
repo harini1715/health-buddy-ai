@@ -1,10 +1,35 @@
 import { motion } from "framer-motion";
-import { FileText, Calendar, Pill } from "lucide-react";
+import { FileText, Calendar, Pill, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { mockPrescriptions } from "@/data/mockData";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Prescriptions() {
+  const { data: prescriptions, isLoading } = useQuery({
+    queryKey: ["prescriptions"],
+    queryFn: async () => {
+      const { data: rxData, error: rxError } = await supabase
+        .from("prescriptions")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (rxError) throw rxError;
+
+      const withMeds = await Promise.all(
+        (rxData || []).map(async (rx) => {
+          const { data: meds } = await supabase
+            .from("medicines")
+            .select("*")
+            .eq("prescription_id", rx.id);
+          return { ...rx, medicines: meds || [] };
+        })
+      );
+
+      return withMeds;
+    },
+  });
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -16,8 +41,26 @@ export default function Prescriptions() {
         </p>
       </motion.div>
 
+      {isLoading && (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-8 w-8 text-primary animate-spin" />
+        </div>
+      )}
+
+      {!isLoading && (!prescriptions || prescriptions.length === 0) && (
+        <Card className="shadow-card">
+          <CardContent className="flex flex-col items-center py-16">
+            <FileText className="h-12 w-12 text-muted-foreground/30 mb-4" />
+            <p className="font-display font-semibold text-foreground">No prescriptions yet</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Upload a prescription to get started
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="space-y-4">
-        {mockPrescriptions.map((rx, i) => (
+        {prescriptions?.map((rx, i) => (
           <motion.div
             key={rx.id}
             initial={{ opacity: 0, y: 20 }}
@@ -33,19 +76,24 @@ export default function Prescriptions() {
                     </div>
                     <div>
                       <CardTitle className="text-base font-display">
-                        {rx.doctorName}
+                        {rx.doctor_name}
                       </CardTitle>
                       <p className="text-sm text-muted-foreground">
-                        {rx.hospitalName}
+                        {rx.hospital_name}
                       </p>
                     </div>
                   </div>
                   <Badge variant="outline" className="font-mono text-[10px]">
-                    {rx.id}
+                    {rx.id.slice(0, 8)}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent>
+                {rx.summary && (
+                  <p className="text-sm text-muted-foreground mb-3 p-3 rounded-lg bg-accent/30">
+                    {rx.summary}
+                  </p>
+                )}
                 <div className="flex items-center gap-4 mb-4">
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Calendar className="h-3.5 w-3.5" />
@@ -65,29 +113,15 @@ export default function Prescriptions() {
                     >
                       <div>
                         <p className="text-sm font-semibold text-foreground">
-                          {med.name}
+                          {med.medicine_name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {med.dosage} · {med.foodInstruction} food
+                          {med.dosage} · {med.food_instruction}
                         </p>
                       </div>
-                      <div className="flex gap-1.5">
-                        {med.timing.morning && (
-                          <Badge className="text-[9px] bg-warning/10 text-warning border-warning/20" variant="outline">
-                            AM
-                          </Badge>
-                        )}
-                        {med.timing.afternoon && (
-                          <Badge className="text-[9px] bg-info/10 text-info border-info/20" variant="outline">
-                            PM
-                          </Badge>
-                        )}
-                        {med.timing.night && (
-                          <Badge className="text-[9px] bg-primary/10 text-primary border-primary/20" variant="outline">
-                            Night
-                          </Badge>
-                        )}
-                      </div>
+                      <Badge variant="secondary" className="text-[10px]">
+                        {med.timing}
+                      </Badge>
                     </div>
                   ))}
                 </div>
