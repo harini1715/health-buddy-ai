@@ -1,0 +1,220 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Upload, FileImage, Loader2, CheckCircle2, Sparkles } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+
+const mockOCRResult = {
+  date: "2026-03-18",
+  hospitalName: "Max Super Speciality Hospital",
+  doctorName: "Dr. Ananya Verma",
+  medicines: [
+    { name: "Azithromycin 500mg", dosage: "1 tablet", timing: "Morning", food: "After food" },
+    { name: "Montelukast 10mg", dosage: "1 tablet", timing: "Night", food: "Before food" },
+    { name: "Salbutamol Inhaler", dosage: "2 puffs", timing: "Morning & Night", food: "N/A" },
+  ],
+};
+
+export default function UploadPrescription() {
+  const [file, setFile] = useState<File | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [result, setResult] = useState<typeof mockOCRResult | null>(null);
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  };
+
+  const handleFile = (f: File) => {
+    setFile(f);
+    setProcessing(true);
+    setResult(null);
+    setTimeout(() => {
+      setProcessing(false);
+      setResult(mockOCRResult);
+    }, 2500);
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-8">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <h1 className="text-2xl font-display font-bold text-foreground">
+          Upload Prescription
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Upload a prescription image and our AI will extract the details
+        </p>
+      </motion.div>
+
+      {/* Upload Zone */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Card className="shadow-card">
+          <CardContent className="p-0">
+            <label
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
+              className="flex flex-col items-center justify-center py-16 px-8 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary/50 hover:bg-accent/30 transition-colors m-6"
+            >
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleFile(f);
+                }}
+              />
+              <div className="h-16 w-16 rounded-2xl gradient-primary flex items-center justify-center mb-4">
+                <Upload className="h-7 w-7 text-primary-foreground" />
+              </div>
+              <p className="font-display font-semibold text-foreground">
+                Drop your prescription here
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                or click to browse · JPG, PNG, PDF supported
+              </p>
+              {file && (
+                <div className="flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-accent">
+                  <FileImage className="h-4 w-4 text-accent-foreground" />
+                  <span className="text-sm text-accent-foreground font-medium">
+                    {file.name}
+                  </span>
+                </div>
+              )}
+            </label>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Processing State */}
+      <AnimatePresence>
+        {processing && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+          >
+            <Card className="shadow-card">
+              <CardContent className="flex flex-col items-center py-12">
+                <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                <p className="font-display font-semibold mt-4 text-foreground">
+                  Processing Prescription...
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Running OCR & AI analysis (mock)
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Results */}
+      <AnimatePresence>
+        {result && !processing && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-6"
+          >
+            <Card className="shadow-card border-primary/20">
+              <CardHeader className="flex flex-row items-center gap-3 pb-3">
+                <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center">
+                  <Sparkles className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-display">
+                    AI Extraction Complete
+                  </CardTitle>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-success" />
+                    <span className="text-xs text-success">
+                      Successfully extracted
+                    </span>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Prescription Info */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-3 rounded-xl bg-muted/50">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                      Date
+                    </p>
+                    <p className="text-sm font-semibold text-foreground mt-1">
+                      {result.date}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-muted/50">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                      Hospital
+                    </p>
+                    <p className="text-sm font-semibold text-foreground mt-1">
+                      {result.hospitalName}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-muted/50">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                      Doctor
+                    </p>
+                    <p className="text-sm font-semibold text-foreground mt-1">
+                      {result.doctorName}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Medicines */}
+                <div>
+                  <h3 className="font-display font-semibold text-foreground mb-3">
+                    Extracted Medicines
+                  </h3>
+                  <div className="space-y-2">
+                    {result.medicines.map((med, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between p-3 rounded-xl border hover:bg-accent/30 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center text-sm font-bold text-accent-foreground">
+                            {i + 1}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">
+                              {med.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {med.dosage}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-[10px]">
+                            {med.timing}
+                          </Badge>
+                          <Badge variant="outline" className="text-[10px]">
+                            {med.food}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Button className="w-full gradient-primary text-primary-foreground">
+                  Save Prescription
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
