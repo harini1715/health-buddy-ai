@@ -6,8 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { mockReminders } from "@/data/mockData";
 import { useState } from "react";
 
+type ReminderStatus = "upcoming" | "pending" | "done";
+
+interface Reminder {
+  id: number;
+  time: string;
+  medicine: string;
+  instruction: string;
+  status: ReminderStatus;
+}
+
 export default function Reminders() {
-  const [reminders, setReminders] = useState(mockReminders);
+  const [reminders, setReminders] = useState<Reminder[]>(mockReminders as Reminder[]);
 
   const speakReminder = (medicine: string, time: string, instruction: string) => {
     const msg = new SpeechSynthesisUtterance(
