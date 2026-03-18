@@ -51,8 +51,8 @@ export default function UploadPrescription() {
   const handleFile = async (f: File) => {
     setFile(f);
     setProcessing(true);
-    setResult(null);
     setError(null);
+    setSaved(false);
 
     try {
       const imageBase64 = await fileToBase64(f);
