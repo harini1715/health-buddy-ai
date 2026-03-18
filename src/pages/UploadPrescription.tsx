@@ -23,8 +23,10 @@ interface PrescriptionResult {
 export default function UploadPrescription() {
   const [file, setFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<PrescriptionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
