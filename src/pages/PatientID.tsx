@@ -1,3 +1,4 @@
+import { useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Heart, UserCircle, Download, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,8 +7,12 @@ import { mockPatient } from "@/data/mockData";
 import { QRCodeSVG } from "qrcode.react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toPng } from "html-to-image";
+import { toast } from "@/hooks/use-toast";
 
 export default function PatientID() {
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const { data: prescriptions, isLoading } = useQuery({
     queryKey: ["all-prescriptions-for-qr"],
     queryFn: async () => {
@@ -40,7 +45,8 @@ export default function PatientID() {
     },
   });
 
-  const qrData = JSON.stringify({
+  // Build a scannable URL with patient + prescription data
+  const qrPayload = {
     patient: {
       id: mockPatient.id,
       name: mockPatient.name,
@@ -50,7 +56,29 @@ export default function PatientID() {
       contact: mockPatient.contactNumber,
     },
     prescriptions: prescriptions || [],
-  });
+  };
+
+  const qrUrl = `${window.location.origin}/patient-id?data=${encodeURIComponent(
+    btoa(JSON.stringify(qrPayload))
+  )}`;
+
+  const handleDownload = useCallback(async () => {
+    if (!cardRef.current) return;
+    try {
+      const dataUrl = await toPng(cardRef.current, {
+        cacheBust: true,
+        backgroundColor: "#ffffff",
+        pixelRatio: 2,
+      });
+      const link = document.createElement("a");
+      link.download = `patient-id-${mockPatient.id}.png`;
+      link.href = dataUrl;
+      link.click();
+      toast({ title: "Downloaded!", description: "ID card saved as image." });
+    } catch {
+      toast({ title: "Download failed", description: "Please try again.", variant: "destructive" });
+    }
+  }, []);
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -68,7 +96,7 @@ export default function PatientID() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
       >
-        <Card className="overflow-hidden shadow-elevated">
+        <Card ref={cardRef} className="overflow-hidden shadow-elevated">
           {/* Card Header */}
           <div className="gradient-hero p-6 pb-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-primary/10 -translate-y-1/2 translate-x-1/2" />
@@ -120,7 +148,7 @@ export default function PatientID() {
                   Scan for full details
                 </p>
                 <p className="text-[10px] text-muted-foreground/60 mt-0.5">
-                  Includes patient info & prescriptions
+                  Opens patient profile & prescriptions
                 </p>
               </div>
               {isLoading ? (
@@ -129,7 +157,7 @@ export default function PatientID() {
                 </div>
               ) : (
                 <QRCodeSVG
-                  value={qrData}
+                  value={qrUrl}
                   size={96}
                   level="L"
                   className="rounded-lg"
@@ -140,7 +168,7 @@ export default function PatientID() {
         </Card>
       </motion.div>
 
-      <Button variant="outline" className="w-full">
+      <Button variant="outline" className="w-full" onClick={handleDownload}>
         <Download className="h-4 w-4 mr-2" /> Download ID Card
       </Button>
     </div>
