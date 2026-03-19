@@ -45,22 +45,8 @@ export default function PatientID() {
     },
   });
 
-  // Build a scannable URL with patient + prescription data
-  const qrPayload = {
-    patient: {
-      id: mockPatient.id,
-      name: mockPatient.name,
-      age: mockPatient.age,
-      gender: mockPatient.gender,
-      bloodGroup: mockPatient.bloodGroup,
-      contact: mockPatient.contactNumber,
-    },
-    prescriptions: prescriptions || [],
-  };
-
-  const qrUrl = `${window.location.origin}/patient-id?data=${encodeURIComponent(
-    btoa(JSON.stringify(qrPayload))
-  )}`;
+  // Simple, clean URL for reliable scanning
+  const qrUrl = `${window.location.origin}/patient-id`;
 
   const handleDownload = useCallback(async () => {
     if (!cardRef.current) return;
