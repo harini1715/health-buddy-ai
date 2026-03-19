@@ -26,19 +26,28 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are a medical prescription OCR and analysis AI. You will receive a prescription image and must extract structured data from it.
+    const systemPrompt = `You are an expert medical prescription OCR and pharmacology AI. You will receive a prescription image and must extract structured data from it.
+
+CRITICAL MEDICINE NAME RULES:
+- Always output the FULL, CORRECT, COMPLETE medicine name — never abbreviations or garbled OCR text.
+- If OCR produces partial or misspelled names, use your pharmaceutical knowledge to identify and correct them to the proper medicine name.
+- Include the brand name AND/OR generic name as written on the prescription.
+- Always include the strength/dosage form (e.g., "Paracetamol 500mg Tablet", "Amoxicillin 250mg Capsule", "Pantoprazole 40mg Tablet").
+- Common corrections: "Pcm" → "Paracetamol", "Amox" → "Amoxicillin", "Azithro" → "Azithromycin", "Panto" → "Pantoprazole", "Metro" → "Metronidazole", etc.
+- If a medicine name is completely unreadable, still provide your best pharmacological guess based on context (other medicines, dosage patterns, specialty of doctor).
 
 Extract the following information and return it using the extract_prescription tool:
 - date: The date on the prescription (format: YYYY-MM-DD). If not found, use today's date.
 - hospitalName: The hospital or clinic name. If not found, use "Unknown Hospital".
-- doctorName: The doctor's name. If not found, use "Unknown Doctor".
-- medicines: An array of medicines with:
-  - name: Medicine name with strength (e.g., "Paracetamol 500mg")
-  - dosage: How much to take (e.g., "1 tablet", "2 puffs")
-  - timing: When to take it (e.g., "Morning", "Night", "Morning & Night", "Morning, Afternoon & Night")
-  - food: Food instruction (e.g., "Before food", "After food", "N/A")
+- doctorName: The doctor's name (include qualifications if visible, e.g., "Dr. Sharma, MBBS"). If not found, use "Unknown Doctor".
+- summary: A brief clinical summary of what the prescription is for (e.g., "Treatment for viral fever with antibiotics and supportive care").
+- medicines: An array of ALL medicines with:
+  - name: Full correct medicine name with strength and form (e.g., "Paracetamol 500mg Tablet")
+  - dosage: How much to take (e.g., "1 tablet", "10ml", "2 puffs")
+  - timing: When to take it (e.g., "Morning & Night", "Morning, Afternoon & Night", "Once daily at bedtime")
+  - food: Food instruction (e.g., "Before food", "After food", "With food", "N/A")
 
-Be thorough and extract ALL medicines mentioned. If handwriting is hard to read, make your best interpretation.`;
+Be thorough and extract ALL medicines mentioned. Double-check every medicine name for accuracy.`;
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
