@@ -38,7 +38,7 @@ export default function Dashboard() {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Good Morning, Chandry 👋
+          Good Morning, {userName} 👋
         </h1>
         <p className="text-muted-foreground mt-1">
           Here's your health overview for today
