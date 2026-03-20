@@ -41,6 +41,7 @@ const managementItems = [
 ];
 
 export function AppSidebar() {
+  const { signOut } = useAuth();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
