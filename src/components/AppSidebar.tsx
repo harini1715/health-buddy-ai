@@ -7,8 +7,11 @@ import {
   IdCard,
   Bell,
   Heart,
+  LogOut,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -38,6 +41,7 @@ const managementItems = [
 ];
 
 export function AppSidebar() {
+  const { signOut } = useAuth();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
@@ -116,17 +120,15 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
-        {!collapsed && (
-          <div className="rounded-lg bg-sidebar-accent p-3">
-            <p className="font-display text-xs font-semibold text-sidebar-accent-foreground">
-              Mock Mode
-            </p>
-            <p className="text-[10px] text-sidebar-foreground/50 mt-0.5">
-              Using simulated data
-            </p>
-          </div>
-        )}
+      <SidebarFooter className="p-4 space-y-2">
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+          onClick={signOut}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          {!collapsed && <span>Sign Out</span>}
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );

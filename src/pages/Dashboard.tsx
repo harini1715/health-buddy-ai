@@ -13,10 +13,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { dashboardStats, mockReminders, mockPrescriptions } from "@/data/mockData";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const statIcons = [Pill, FileText, Clock, TrendingUp];
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  const userName = user?.user_metadata?.username || "there";
+
   const speakReminder = (medicine: string, time: string, instruction: string) => {
     const msg = new SpeechSynthesisUtterance(
       `Hi Chandry, it's ${time}. Please take ${medicine} ${instruction}.`
@@ -34,7 +38,7 @@ export default function Dashboard() {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Good Morning, Chandry 👋
+          Good Morning, {userName} 👋
         </h1>
         <p className="text-muted-foreground mt-1">
           Here's your health overview for today
