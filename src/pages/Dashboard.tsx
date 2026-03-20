@@ -18,6 +18,9 @@ import { useAuth } from "@/hooks/useAuth";
 const statIcons = [Pill, FileText, Clock, TrendingUp];
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  const userName = user?.user_metadata?.username || "there";
+
   const speakReminder = (medicine: string, time: string, instruction: string) => {
     const msg = new SpeechSynthesisUtterance(
       `Hi Chandry, it's ${time}. Please take ${medicine} ${instruction}.`
