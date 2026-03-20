@@ -143,7 +143,20 @@ Be thorough and extract ALL medicines mentioned. Double-check every medicine nam
       );
     }
 
-    const data = await response.json();
+    const responseText = await response.text();
+    console.log("AI response length:", responseText.length, "first 200 chars:", responseText.substring(0, 200));
+    
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseErr) {
+      console.error("Failed to parse AI response as JSON. Response text:", responseText.substring(0, 1000));
+      return new Response(
+        JSON.stringify({ error: "AI returned invalid response. Please try again with a clearer image." }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     console.log("AI response structure:", JSON.stringify({
       hasChoices: !!data.choices,
       choiceCount: data.choices?.length,
