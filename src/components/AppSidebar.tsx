@@ -7,8 +7,11 @@ import {
   IdCard,
   Bell,
   Heart,
+  LogOut,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import {
   Sidebar,
