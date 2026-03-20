@@ -58,7 +58,7 @@ Be thorough and extract ALL medicines mentioned. Double-check every medicine nam
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: "google/gemini-2.5-pro",
           messages: [
             { role: "system", content: systemPrompt },
             {
@@ -144,9 +144,38 @@ Be thorough and extract ALL medicines mentioned. Double-check every medicine nam
     }
 
     const data = await response.json();
+    console.log("AI response structure:", JSON.stringify({
+      hasChoices: !!data.choices,
+      choiceCount: data.choices?.length,
+      finishReason: data.choices?.[0]?.finish_reason,
+      hasToolCalls: !!data.choices?.[0]?.message?.tool_calls,
+      toolCallCount: data.choices?.[0]?.message?.tool_calls?.length,
+      hasContent: !!data.choices?.[0]?.message?.content,
+    }));
+
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
 
     if (!toolCall) {
+      // Fallback: try to parse from content if model responded with text instead of tool call
+      const content = data.choices?.[0]?.message?.content;
+      if (content) {
+        console.log("No tool call, trying to parse content as JSON. Content:", content.substring(0, 500));
+        try {
+          // Try to find JSON in the content
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            if (parsed.medicines) {
+              return new Response(JSON.stringify(parsed), {
+                status: 200,
+                headers: { ...corsHeaders, "Content-Type": "application/json" },
+              });
+            }
+          }
+        } catch (parseErr) {
+          console.error("Failed to parse content as JSON:", parseErr);
+        }
+      }
       console.error("No tool call in response:", JSON.stringify(data));
       return new Response(
         JSON.stringify({ error: "AI could not extract prescription data" }),
@@ -155,6 +184,7 @@ Be thorough and extract ALL medicines mentioned. Double-check every medicine nam
     }
 
     const extracted = JSON.parse(toolCall.function.arguments);
+    console.log("Extracted medicines count:", extracted.medicines?.length);
 
     return new Response(JSON.stringify(extracted), {
       status: 200,
