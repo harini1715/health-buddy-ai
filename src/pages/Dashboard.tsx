@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { dashboardStats, mockReminders, mockPrescriptions } from "@/data/mockData";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const statIcons = [Pill, FileText, Clock, TrendingUp];
 
