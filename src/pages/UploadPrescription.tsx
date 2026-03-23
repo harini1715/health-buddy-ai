@@ -338,7 +338,7 @@ export default function UploadPrescription() {
                     }
                   }}
                 >
-                  {saved ? "✓ Saved" : saving ? "Saving..." : "Save Prescription"}
+                  {saved ? t("upload.saved") : saving ? t("upload.saving") : t("upload.save")}
                 </Button>
               </CardContent>
             </Card>
