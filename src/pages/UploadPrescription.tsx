@@ -253,7 +253,7 @@ export default function UploadPrescription() {
                 {/* Medicines */}
                 <div>
                   <h3 className="font-display font-semibold text-foreground mb-3">
-                    Extracted Medicines ({result.medicines.length})
+                    {t("upload.extractedMeds")} ({result.medicines.length})
                   </h3>
                   <div className="space-y-2">
                     {result.medicines.map((med, i) => (
