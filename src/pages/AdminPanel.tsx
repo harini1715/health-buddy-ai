@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface Medicine {
   name: string;
@@ -25,6 +26,7 @@ interface Medicine {
 }
 
 export default function AdminPanel() {
+  const { t } = useLanguage();
   const [medicines, setMedicines] = useState<Medicine[]>([
     { name: "", dosage: "", morning: false, afternoon: false, night: false, foodInstruction: "after" },
   ]);
@@ -60,10 +62,10 @@ export default function AdminPanel() {
           </div>
           <div>
             <h1 className="text-2xl font-display font-bold text-foreground">
-              Admin Panel
+              {t("admin.title")}
             </h1>
             <p className="text-muted-foreground">
-              Create prescriptions manually
+              {t("admin.subtitle")}
             </p>
           </div>
         </div>
@@ -78,28 +80,28 @@ export default function AdminPanel() {
           <Card className="shadow-card">
             <CardHeader>
               <CardTitle className="text-base font-display">
-                Doctor & Hospital Details
+                {t("admin.doctorHospital")}
               </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Hospital Name</Label>
+                <Label>{t("admin.hospitalName")}</Label>
                 <Input placeholder="e.g., Apollo Hospitals" />
               </div>
               <div className="space-y-2">
-                <Label>Doctor Name</Label>
+                <Label>{t("admin.doctorName")}</Label>
                 <Input placeholder="e.g., Dr. Priya Sharma" />
               </div>
               <div className="space-y-2">
-                <Label>Specialization</Label>
+                <Label>{t("admin.specialization")}</Label>
                 <Input placeholder="e.g., General Medicine" />
               </div>
               <div className="space-y-2">
-                <Label>Contact Number</Label>
+                <Label>{t("admin.contactNumber")}</Label>
                 <Input placeholder="+91 XXXXX XXXXX" />
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <Label>Address</Label>
+                <Label>{t("admin.address")}</Label>
                 <Input placeholder="Hospital address" />
               </div>
             </CardContent>
@@ -114,21 +116,18 @@ export default function AdminPanel() {
           <Card className="shadow-card">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-base font-display">
-                Medicines
+                {t("admin.medicines")}
               </CardTitle>
               <Button type="button" variant="outline" size="sm" onClick={addMedicine}>
-                <Plus className="h-4 w-4 mr-1" /> Add Medicine
+                <Plus className="h-4 w-4 mr-1" /> {t("admin.addMedicine")}
               </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               {medicines.map((med, i) => (
-                <div
-                  key={i}
-                  className="p-4 rounded-xl border space-y-3"
-                >
+                <div key={i} className="p-4 rounded-xl border space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-display font-semibold text-foreground">
-                      Medicine {i + 1}
+                      {t("common.medicine")} {i + 1}
                     </span>
                     {medicines.length > 1 && (
                       <Button
@@ -144,7 +143,7 @@ export default function AdminPanel() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <Label className="text-xs">Medicine Name</Label>
+                      <Label className="text-xs">{t("admin.medicineName")}</Label>
                       <Input
                         value={med.name}
                         onChange={(e) => updateMedicine(i, "name", e.target.value)}
@@ -152,7 +151,7 @@ export default function AdminPanel() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs">Dosage</Label>
+                      <Label className="text-xs">{t("admin.dosage")}</Label>
                       <Input
                         value={med.dosage}
                         onChange={(e) => updateMedicine(i, "dosage", e.target.value)}
@@ -166,21 +165,21 @@ export default function AdminPanel() {
                         checked={med.morning}
                         onCheckedChange={(v) => updateMedicine(i, "morning", !!v)}
                       />
-                      <Label className="text-xs">Morning</Label>
+                      <Label className="text-xs">{t("admin.morning")}</Label>
                     </div>
                     <div className="flex items-center gap-2">
                       <Checkbox
                         checked={med.afternoon}
                         onCheckedChange={(v) => updateMedicine(i, "afternoon", !!v)}
                       />
-                      <Label className="text-xs">Afternoon</Label>
+                      <Label className="text-xs">{t("admin.afternoon")}</Label>
                     </div>
                     <div className="flex items-center gap-2">
                       <Checkbox
                         checked={med.night}
                         onCheckedChange={(v) => updateMedicine(i, "night", !!v)}
                       />
-                      <Label className="text-xs">Night</Label>
+                      <Label className="text-xs">{t("admin.night")}</Label>
                     </div>
                     <Select
                       value={med.foodInstruction}
@@ -190,8 +189,8 @@ export default function AdminPanel() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="before">Before Food</SelectItem>
-                        <SelectItem value="after">After Food</SelectItem>
+                        <SelectItem value="before">{t("admin.beforeFood")}</SelectItem>
+                        <SelectItem value="after">{t("admin.afterFood")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -202,7 +201,7 @@ export default function AdminPanel() {
         </motion.div>
 
         <Button type="submit" className="w-full gradient-primary text-primary-foreground h-12 font-display font-semibold">
-          Create Prescription
+          {t("admin.createRx")}
         </Button>
       </form>
     </div>

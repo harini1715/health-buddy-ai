@@ -13,15 +13,18 @@ import {
 } from "@/components/ui/select";
 import { mockPatient } from "@/data/mockData";
 import { toast } from "sonner";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function Profile() {
+  const { t } = useLanguage();
+
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Patient Profile
+          {t("profile.title")}
         </h1>
-        <p className="text-muted-foreground mt-1">Manage your personal details</p>
+        <p className="text-muted-foreground mt-1">{t("profile.subtitle")}</p>
       </motion.div>
 
       <motion.div
@@ -32,11 +35,10 @@ export default function Profile() {
         <Card className="shadow-card">
           <CardHeader>
             <CardTitle className="text-base font-display">
-              Personal Information
+              {t("profile.personalInfo")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Photo */}
             <div className="flex items-center gap-6">
               <div className="relative">
                 <div className="h-20 w-20 rounded-2xl gradient-primary flex items-center justify-center">
@@ -58,28 +60,28 @@ export default function Profile() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Full Name</Label>
+                <Label>{t("profile.fullName")}</Label>
                 <Input defaultValue={mockPatient.name} />
               </div>
               <div className="space-y-2">
-                <Label>Age</Label>
+                <Label>{t("profile.age")}</Label>
                 <Input type="number" defaultValue={mockPatient.age} />
               </div>
               <div className="space-y-2">
-                <Label>Gender</Label>
+                <Label>{t("profile.gender")}</Label>
                 <Select defaultValue={mockPatient.gender.toLowerCase()}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="male">{t("profile.male")}</SelectItem>
+                    <SelectItem value="female">{t("profile.female")}</SelectItem>
+                    <SelectItem value="other">{t("profile.other")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Blood Group</Label>
+                <Label>{t("profile.bloodGroup")}</Label>
                 <Select defaultValue="o+">
                   <SelectTrigger>
                     <SelectValue />
@@ -94,11 +96,11 @@ export default function Profile() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Contact Number</Label>
+                <Label>{t("profile.contact")}</Label>
                 <Input defaultValue={mockPatient.contactNumber} />
               </div>
               <div className="space-y-2">
-                <Label>Address</Label>
+                <Label>{t("profile.address")}</Label>
                 <Input defaultValue={mockPatient.address} />
               </div>
             </div>
@@ -107,7 +109,7 @@ export default function Profile() {
               className="w-full gradient-primary text-primary-foreground"
               onClick={() => toast.success("Profile updated! (Mock)")}
             >
-              Save Changes
+              {t("profile.save")}
             </Button>
           </CardContent>
         </Card>

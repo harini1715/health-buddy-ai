@@ -9,9 +9,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toPng } from "html-to-image";
 import { toast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function PatientID() {
   const cardRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   const { data: prescriptions, isLoading } = useQuery({
     queryKey: ["all-prescriptions-for-qr"],
@@ -45,7 +47,6 @@ export default function PatientID() {
     },
   });
 
-  // Simple, clean URL for reliable scanning
   const qrUrl = `${window.location.origin}/patient-id`;
 
   const handleDownload = useCallback(async () => {
@@ -70,10 +71,10 @@ export default function PatientID() {
     <div className="max-w-2xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Patient ID Card
+          {t("pid.title")}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Your digital health identity
+          {t("pid.subtitle")}
         </p>
       </motion.div>
 
@@ -83,7 +84,6 @@ export default function PatientID() {
         transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
       >
         <Card ref={cardRef} className="overflow-hidden shadow-elevated">
-          {/* Card Header */}
           <div className="gradient-hero p-6 pb-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-primary/10 -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-primary/5 translate-y-1/2 -translate-x-1/2" />
@@ -94,7 +94,7 @@ export default function PatientID() {
                   Health Twin AI
                 </h2>
                 <p className="text-xs text-primary-foreground/60">
-                  Digital Health Card
+                  {t("pid.digitalCard")}
                 </p>
               </div>
             </div>
@@ -115,26 +115,25 @@ export default function PatientID() {
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-left">
-                  <InfoRow label="Age" value={`${mockPatient.age} yrs`} />
-                  <InfoRow label="Gender" value={mockPatient.gender} />
-                  <InfoRow label="Blood Group" value={mockPatient.bloodGroup} />
-                  <InfoRow label="Contact" value={mockPatient.contactNumber} />
+                  <InfoRow label={t("profile.age")} value={`${mockPatient.age} yrs`} />
+                  <InfoRow label={t("profile.gender")} value={mockPatient.gender} />
+                  <InfoRow label={t("profile.bloodGroup")} value={mockPatient.bloodGroup} />
+                  <InfoRow label={t("profile.contact")} value={mockPatient.contactNumber} />
                 </div>
               </div>
             </div>
 
             <div className="mt-5 pt-4 border-t">
-              <InfoRow label="Address" value={mockPatient.address} />
+              <InfoRow label={t("profile.address")} value={mockPatient.address} />
             </div>
 
-            {/* QR Code */}
             <div className="mt-5 flex items-center justify-between p-4 rounded-xl bg-muted/50">
               <div>
                 <p className="text-xs text-muted-foreground font-semibold">
-                  Scan for full details
+                  {t("pid.scanDetails")}
                 </p>
                 <p className="text-[10px] text-muted-foreground/60 mt-0.5">
-                  Opens patient profile & prescriptions
+                  {t("pid.opensProfile")}
                 </p>
               </div>
               {isLoading ? (
@@ -155,7 +154,7 @@ export default function PatientID() {
       </motion.div>
 
       <Button variant="outline" className="w-full" onClick={handleDownload}>
-        <Download className="h-4 w-4 mr-2" /> Download ID Card
+        <Download className="h-4 w-4 mr-2" /> {t("pid.download")}
       </Button>
     </div>
   );
