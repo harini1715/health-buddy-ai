@@ -272,13 +272,18 @@ export default function UploadPrescription() {
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <Badge variant="secondary" className="text-[10px]">
                             {med.timing}
                           </Badge>
                           <Badge variant="outline" className="text-[10px]">
                             {med.food}
                           </Badge>
+                          {med.duration && (
+                            <Badge className="text-[10px] bg-info text-info-foreground">
+                              {med.duration}
+                            </Badge>
+                          )}
                         </div>
                       </div>
                     ))}
