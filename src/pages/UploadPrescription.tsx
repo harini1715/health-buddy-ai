@@ -226,7 +226,7 @@ export default function UploadPrescription() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-3 rounded-xl bg-muted/50">
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-                      Date
+                      {t("upload.date")}
                     </p>
                     <p className="text-sm font-semibold text-foreground mt-1">
                       {result.date}
