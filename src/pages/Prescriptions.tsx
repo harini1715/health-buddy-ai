@@ -109,17 +109,17 @@ export default function Prescriptions() {
                   {rx.medicines.map((med) => (
                     <div
                       key={med.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-lg bg-muted/50"
                     >
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate">
                           {med.medicine_name}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {med.dosage} · {med.food_instruction}
                         </p>
                       </div>
-                      <Badge variant="secondary" className="text-[10px]">
+                      <Badge variant="secondary" className="text-[10px] shrink-0 self-start sm:self-auto">
                         {med.timing}
                       </Badge>
                     </div>
