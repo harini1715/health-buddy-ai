@@ -153,10 +153,10 @@ export default function UploadPrescription() {
               <CardContent className="flex flex-col items-center py-12">
                 <Loader2 className="h-10 w-10 text-primary animate-spin" />
                 <p className="font-display font-semibold mt-4 text-foreground">
-                  Analyzing Prescription with AI...
+                  {t("upload.analyzing")}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Extracting text and structuring data
+                  {t("upload.extracting")}
                 </p>
               </CardContent>
             </Card>
