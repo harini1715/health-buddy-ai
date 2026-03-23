@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface PrescriptionResult {
   date: string;
@@ -22,6 +23,7 @@ interface PrescriptionResult {
 }
 
 export default function UploadPrescription() {
+  const { t } = useLanguage();
   const [file, setFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -88,10 +90,10 @@ export default function UploadPrescription() {
     <div className="max-w-4xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Upload Prescription
+          {t("upload.title")}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Upload a prescription image and our AI will extract the details
+          {t("upload.subtitle")}
         </p>
       </motion.div>
 
@@ -121,10 +123,10 @@ export default function UploadPrescription() {
                 <Upload className="h-7 w-7 text-primary-foreground" />
               </div>
               <p className="font-display font-semibold text-foreground">
-                Drop your prescription here
+                {t("upload.drop")}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                or click to browse · JPG, PNG supported
+                {t("upload.browse")}
               </p>
               {file && (
                 <div className="flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-accent">
@@ -151,10 +153,10 @@ export default function UploadPrescription() {
               <CardContent className="flex flex-col items-center py-12">
                 <Loader2 className="h-10 w-10 text-primary animate-spin" />
                 <p className="font-display font-semibold mt-4 text-foreground">
-                  Analyzing Prescription with AI...
+                  {t("upload.analyzing")}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Extracting text and structuring data
+                  {t("upload.extracting")}
                 </p>
               </CardContent>
             </Card>
@@ -174,7 +176,7 @@ export default function UploadPrescription() {
               <CardContent className="flex items-center gap-3 py-6">
                 <AlertCircle className="h-6 w-6 text-destructive shrink-0" />
                 <div>
-                  <p className="font-semibold text-foreground">Analysis Failed</p>
+                  <p className="font-semibold text-foreground">{t("upload.failed")}</p>
                   <p className="text-sm text-muted-foreground">{error}</p>
                 </div>
               </CardContent>
@@ -199,12 +201,12 @@ export default function UploadPrescription() {
                 </div>
                 <div>
                   <CardTitle className="text-lg font-display">
-                    AI Extraction Complete
+                    {t("upload.complete")}
                   </CardTitle>
                   <div className="flex items-center gap-1 mt-0.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-success" />
                     <span className="text-xs text-success">
-                      Powered by Lovable AI
+                      {t("upload.poweredBy")}
                     </span>
                   </div>
                 </div>
@@ -214,7 +216,7 @@ export default function UploadPrescription() {
                 {result.summary && (
                   <div className="p-4 rounded-xl gradient-accent">
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
-                      AI Summary
+                      {t("upload.aiSummary")}
                     </p>
                     <p className="text-sm text-foreground">{result.summary}</p>
                   </div>
@@ -224,7 +226,7 @@ export default function UploadPrescription() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-3 rounded-xl bg-muted/50">
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-                      Date
+                      {t("upload.date")}
                     </p>
                     <p className="text-sm font-semibold text-foreground mt-1">
                       {result.date}
@@ -232,7 +234,7 @@ export default function UploadPrescription() {
                   </div>
                   <div className="p-3 rounded-xl bg-muted/50">
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-                      Hospital
+                      {t("upload.hospital")}
                     </p>
                     <p className="text-sm font-semibold text-foreground mt-1">
                       {result.hospitalName}
@@ -240,7 +242,7 @@ export default function UploadPrescription() {
                   </div>
                   <div className="p-3 rounded-xl bg-muted/50">
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-                      Doctor
+                      {t("upload.doctor")}
                     </p>
                     <p className="text-sm font-semibold text-foreground mt-1">
                       {result.doctorName}
@@ -251,7 +253,7 @@ export default function UploadPrescription() {
                 {/* Medicines */}
                 <div>
                   <h3 className="font-display font-semibold text-foreground mb-3">
-                    Extracted Medicines ({result.medicines.length})
+                    {t("upload.extractedMeds")} ({result.medicines.length})
                   </h3>
                   <div className="space-y-2">
                     {result.medicines.map((med, i) => (
@@ -336,7 +338,7 @@ export default function UploadPrescription() {
                     }
                   }}
                 >
-                  {saved ? "✓ Saved" : saving ? "Saving..." : "Save Prescription"}
+                  {saved ? t("upload.saved") : saving ? t("upload.saving") : t("upload.save")}
                 </Button>
               </CardContent>
             </Card>

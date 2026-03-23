@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useMemo } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 type ReminderStatus = "upcoming" | "pending" | "done";
 
@@ -34,7 +35,6 @@ function buildReminders(medicines: { id: string; medicine_name: string; dosage: 
     if (timingStr.includes("afternoon")) slots.push({ key: "afternoon", time: timingMap["Afternoon"] });
     if (timingStr.includes("night")) slots.push({ key: "night", time: timingMap["Night"] });
 
-    // If no recognized timing, default to morning
     if (slots.length === 0) slots.push({ key: "default", time: timingMap["Morning"] });
 
     for (const slot of slots) {
@@ -49,11 +49,9 @@ function buildReminders(medicines: { id: string; medicine_name: string; dosage: 
     }
   }
 
-  // Sort by time
   const timeOrder = ["8:30 AM", "2:00 PM", "9:00 PM"];
   reminders.sort((a, b) => timeOrder.indexOf(a.time) - timeOrder.indexOf(b.time));
 
-  // Mark first group as "upcoming"
   if (reminders.length > 0) {
     const firstTime = reminders[0].time;
     for (const r of reminders) {
@@ -65,10 +63,10 @@ function buildReminders(medicines: { id: string; medicine_name: string; dosage: 
 }
 
 export default function Reminders() {
+  const { t } = useLanguage();
   const { data: latestPrescription, isLoading } = useQuery({
     queryKey: ["latest-prescription-reminders"],
     queryFn: async () => {
-      // Get the latest prescription
       const { data: rxData, error: rxError } = await supabase
         .from("prescriptions")
         .select("*")
@@ -79,7 +77,6 @@ export default function Reminders() {
       if (rxError) throw rxError;
       if (!rxData) return null;
 
-      // Get its medicines
       const { data: meds, error: medError } = await supabase
         .from("medicines")
         .select("*")
@@ -121,10 +118,10 @@ export default function Reminders() {
     <div className="max-w-3xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Medicine Reminders 🔔
+          {t("rem.title")}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Stay on track with your medication schedule
+          {t("rem.subtitle")}
         </p>
       </motion.div>
 
@@ -138,9 +135,9 @@ export default function Reminders() {
         <Card className="shadow-card">
           <CardContent className="flex flex-col items-center py-16">
             <Pill className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="font-display font-semibold text-foreground">No reminders yet</p>
+            <p className="font-display font-semibold text-foreground">{t("rem.noReminders")}</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Save a prescription to generate reminders
+              {t("rem.saveToGenerate")}
             </p>
           </CardContent>
         </Card>
@@ -151,7 +148,7 @@ export default function Reminders() {
           {latestPrescription && (
             <div className="p-4 rounded-xl gradient-accent">
               <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
-                Based on latest prescription
+                {t("rem.basedOn")}
               </p>
               <p className="text-sm font-semibold text-foreground mt-1">
                 {latestPrescription.doctor_name} · {latestPrescription.hospital_name}
@@ -162,7 +159,7 @@ export default function Reminders() {
 
           <Card className="shadow-card">
             <CardHeader>
-              <CardTitle className="text-lg font-display">Today's Schedule</CardTitle>
+              <CardTitle className="text-lg font-display">{t("rem.todaySchedule")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {reminders.map((r, i) => (
@@ -215,7 +212,7 @@ export default function Reminders() {
                         r.status === "done" ? "bg-success text-success-foreground" : ""
                       }`}
                     >
-                      {r.status === "done" ? "taken" : r.status}
+                      {r.status === "done" ? t("rem.taken") : r.status === "upcoming" ? t("common.upcoming") : t("common.pending")}
                     </Badge>
                     {r.status !== "done" && (
                       <>
@@ -235,7 +232,7 @@ export default function Reminders() {
                           className="text-xs h-7"
                           onClick={() => markDone(r.id)}
                         >
-                          Mark Done
+                          {t("rem.markDone")}
                         </Button>
                       </>
                     )}

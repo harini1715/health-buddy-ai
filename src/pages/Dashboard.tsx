@@ -14,16 +14,18 @@ import { Badge } from "@/components/ui/badge";
 import { dashboardStats, mockReminders, mockPrescriptions } from "@/data/mockData";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const statIcons = [Pill, FileText, Clock, TrendingUp];
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const userName = user?.user_metadata?.username || "there";
 
   const speakReminder = (medicine: string, time: string, instruction: string) => {
     const msg = new SpeechSynthesisUtterance(
-      `Hi Chandry, it's ${time}. Please take ${medicine} ${instruction}.`
+      `Hi ${userName}, it's ${time}. Please take ${medicine} ${instruction}.`
     );
     msg.rate = 0.9;
     speechSynthesis.speak(msg);
@@ -31,21 +33,19 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Good Morning, {userName} 👋
+          {t("dash.greeting")}, {userName} 👋
         </h1>
         <p className="text-muted-foreground mt-1">
-          Here's your health overview for today
+          {t("dash.overview")}
         </p>
       </motion.div>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {dashboardStats.map((stat, i) => {
           const Icon = statIcons[i];
@@ -83,7 +83,6 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Today's Reminders */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -91,10 +90,10 @@ export default function Dashboard() {
         >
           <Card className="shadow-card">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <CardTitle className="text-lg font-display">Today's Schedule</CardTitle>
+              <CardTitle className="text-lg font-display">{t("dash.todaySchedule")}</CardTitle>
               <Link to="/reminders">
                 <Button variant="ghost" size="sm" className="text-primary">
-                  View All <ChevronRight className="h-4 w-4 ml-1" />
+                  {t("dash.viewAll")} <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </Link>
             </CardHeader>
@@ -145,7 +144,6 @@ export default function Dashboard() {
           </Card>
         </motion.div>
 
-        {/* Recent Prescriptions */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -154,11 +152,11 @@ export default function Dashboard() {
           <Card className="shadow-card">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="text-lg font-display">
-                Recent Prescriptions
+                {t("dash.recentRx")}
               </CardTitle>
               <Link to="/prescriptions">
                 <Button variant="ghost" size="sm" className="text-primary">
-                  View All <ChevronRight className="h-4 w-4 ml-1" />
+                  {t("dash.viewAll")} <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </Link>
             </CardHeader>
@@ -186,7 +184,7 @@ export default function Dashboard() {
                       📅 {rx.date}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      💊 {rx.medicines.length} medicines
+                      💊 {rx.medicines.length} {t("dash.medicines")}
                     </span>
                   </div>
                 </div>

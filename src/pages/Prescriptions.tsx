@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function Prescriptions() {
+  const { t } = useLanguage();
   const { data: prescriptions, isLoading } = useQuery({
     queryKey: ["prescriptions"],
     queryFn: async () => {
@@ -34,10 +36,10 @@ export default function Prescriptions() {
     <div className="max-w-4xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Prescription History
+          {t("rx.title")}
         </h1>
         <p className="text-muted-foreground mt-1">
-          All your prescriptions in one place
+          {t("rx.subtitle")}
         </p>
       </motion.div>
 
@@ -51,9 +53,9 @@ export default function Prescriptions() {
         <Card className="shadow-card">
           <CardContent className="flex flex-col items-center py-16">
             <FileText className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="font-display font-semibold text-foreground">No prescriptions yet</p>
+            <p className="font-display font-semibold text-foreground">{t("rx.noRx")}</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Upload a prescription to get started
+              {t("rx.uploadToStart")}
             </p>
           </CardContent>
         </Card>
@@ -101,7 +103,7 @@ export default function Prescriptions() {
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Pill className="h-3.5 w-3.5" />
-                    {rx.medicines.length} medicines
+                    {rx.medicines.length} {t("dash.medicines")}
                   </div>
                 </div>
 
