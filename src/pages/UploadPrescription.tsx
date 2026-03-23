@@ -23,6 +23,7 @@ interface PrescriptionResult {
 }
 
 export default function UploadPrescription() {
+  const { t } = useLanguage();
   const [file, setFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
   const [saving, setSaving] = useState(false);
