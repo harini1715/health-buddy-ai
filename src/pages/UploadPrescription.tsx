@@ -216,7 +216,7 @@ export default function UploadPrescription() {
                 {result.summary && (
                   <div className="p-4 rounded-xl gradient-accent">
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
-                      AI Summary
+                      {t("upload.aiSummary")}
                     </p>
                     <p className="text-sm text-foreground">{result.summary}</p>
                   </div>
