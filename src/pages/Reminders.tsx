@@ -171,7 +171,7 @@ export default function Reminders() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className={`flex items-center justify-between p-4 rounded-xl border transition-colors ${
+                  className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-xl border transition-colors ${
                     r.status === "done"
                       ? "bg-success/5 border-success/20 opacity-60"
                       : "hover:bg-accent/30"

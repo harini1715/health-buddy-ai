@@ -101,11 +101,11 @@ export default function PatientID() {
           </div>
 
           <CardContent className="p-6 -mt-4">
-            <div className="flex items-start gap-5">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
               <div className="h-20 w-20 rounded-2xl gradient-primary flex items-center justify-center shadow-glow shrink-0">
                 <UserCircle className="h-10 w-10 text-primary-foreground" />
               </div>
-              <div className="flex-1 space-y-3">
+              <div className="flex-1 space-y-3 text-center sm:text-left">
                 <div>
                   <p className="font-display text-xl font-bold text-foreground">
                     {mockPatient.name}
@@ -114,7 +114,7 @@ export default function PatientID() {
                     {mockPatient.id}
                   </p>
                 </div>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-left">
                   <InfoRow label="Age" value={`${mockPatient.age} yrs`} />
                   <InfoRow label="Gender" value={mockPatient.gender} />
                   <InfoRow label="Blood Group" value={mockPatient.bloodGroup} />
