@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import {
@@ -27,26 +28,27 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const mainItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Upload Rx", url: "/upload", icon: Upload },
-  { title: "Prescriptions", url: "/prescriptions", icon: FileText },
-  { title: "Reminders", url: "/reminders", icon: Bell },
-];
-
-const managementItems = [
-  { title: "Admin Panel", url: "/admin", icon: ShieldPlus },
-  { title: "Profile", url: "/profile", icon: UserCircle },
-  { title: "Patient ID", url: "/patient-id", icon: IdCard },
-];
-
 export function AppSidebar() {
   const { signOut } = useAuth();
+  const { t } = useLanguage();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
   const currentPath = location.pathname;
   const isActive = (path: string) => currentPath === path;
+
+  const mainItems = [
+    { titleKey: "nav.dashboard", url: "/", icon: LayoutDashboard },
+    { titleKey: "nav.uploadRx", url: "/upload", icon: Upload },
+    { titleKey: "nav.prescriptions", url: "/prescriptions", icon: FileText },
+    { titleKey: "nav.reminders", url: "/reminders", icon: Bell },
+  ];
+
+  const managementItems = [
+    { titleKey: "nav.adminPanel", url: "/admin", icon: ShieldPlus },
+    { titleKey: "nav.profile", url: "/profile", icon: UserCircle },
+    { titleKey: "nav.patientId", url: "/patient-id", icon: IdCard },
+  ];
 
   return (
     <Sidebar collapsible="icon">
@@ -61,7 +63,7 @@ export function AppSidebar() {
                 Health Twin
               </h1>
               <p className="text-[10px] text-sidebar-accent-foreground">
-                AI-Powered Care
+                {t("nav.aiPoweredCare")}
               </p>
             </div>
           )}
@@ -71,12 +73,12 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-sidebar-accent-foreground/60 text-[10px] uppercase tracking-wider">
-            Main
+            {t("nav.main")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.titleKey}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)}>
                     <NavLink
                       to={item.url}
@@ -85,7 +87,7 @@ export function AppSidebar() {
                       activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                     >
                       <item.icon className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      {!collapsed && <span>{t(item.titleKey)}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -96,12 +98,12 @@ export function AppSidebar() {
 
         <SidebarGroup>
           <SidebarGroupLabel className="text-sidebar-accent-foreground/60 text-[10px] uppercase tracking-wider">
-            Management
+            {t("nav.management")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {managementItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.titleKey}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)}>
                     <NavLink
                       to={item.url}
@@ -110,7 +112,7 @@ export function AppSidebar() {
                       activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                     >
                       <item.icon className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      {!collapsed && <span>{t(item.titleKey)}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -127,7 +129,7 @@ export function AppSidebar() {
           onClick={signOut}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          {!collapsed && <span>Sign Out</span>}
+          {!collapsed && <span>{t("nav.signOut")}</span>}
         </Button>
       </SidebarFooter>
     </Sidebar>
