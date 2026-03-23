@@ -123,10 +123,10 @@ export default function UploadPrescription() {
                 <Upload className="h-7 w-7 text-primary-foreground" />
               </div>
               <p className="font-display font-semibold text-foreground">
-                Drop your prescription here
+                {t("upload.drop")}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                or click to browse · JPG, PNG supported
+                {t("upload.browse")}
               </p>
               {file && (
                 <div className="flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-accent">
