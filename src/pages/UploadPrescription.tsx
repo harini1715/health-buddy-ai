@@ -242,7 +242,7 @@ export default function UploadPrescription() {
                   </div>
                   <div className="p-3 rounded-xl bg-muted/50">
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-                      Doctor
+                      {t("upload.doctor")}
                     </p>
                     <p className="text-sm font-semibold text-foreground mt-1">
                       {result.doctorName}
