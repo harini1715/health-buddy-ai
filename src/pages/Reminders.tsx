@@ -177,9 +177,9 @@ export default function Reminders() {
                       : "hover:bg-accent/30"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <div
-                      className={`h-10 w-10 rounded-xl flex items-center justify-center ${
+                      className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
                         r.status === "done"
                           ? "bg-success/10"
                           : r.status === "upcoming"
