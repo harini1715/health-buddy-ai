@@ -90,10 +90,10 @@ export default function UploadPrescription() {
     <div className="max-w-4xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Upload Prescription
+          {t("upload.title")}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Upload a prescription image and our AI will extract the details
+          {t("upload.subtitle")}
         </p>
       </motion.div>
 
