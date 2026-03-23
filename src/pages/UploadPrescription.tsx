@@ -176,7 +176,7 @@ export default function UploadPrescription() {
               <CardContent className="flex items-center gap-3 py-6">
                 <AlertCircle className="h-6 w-6 text-destructive shrink-0" />
                 <div>
-                  <p className="font-semibold text-foreground">Analysis Failed</p>
+                  <p className="font-semibold text-foreground">{t("upload.failed")}</p>
                   <p className="text-sm text-muted-foreground">{error}</p>
                 </div>
               </CardContent>
