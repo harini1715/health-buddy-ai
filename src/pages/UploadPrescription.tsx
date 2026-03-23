@@ -17,6 +17,7 @@ interface PrescriptionResult {
     dosage: string;
     timing: string;
     food: string;
+    duration?: string;
   }[];
 }
 
