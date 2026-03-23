@@ -201,12 +201,12 @@ export default function UploadPrescription() {
                 </div>
                 <div>
                   <CardTitle className="text-lg font-display">
-                    AI Extraction Complete
+                    {t("upload.complete")}
                   </CardTitle>
                   <div className="flex items-center gap-1 mt-0.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-success" />
                     <span className="text-xs text-success">
-                      Powered by Lovable AI
+                      {t("upload.poweredBy")}
                     </span>
                   </div>
                 </div>
