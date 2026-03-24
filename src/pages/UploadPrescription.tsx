@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/hooks/useLanguage";
+import ManualPrescriptionForm from "@/components/ManualPrescriptionForm";
 
 interface PrescriptionResult {
   date: string;
