@@ -485,14 +485,23 @@ Return data using the extract_prescription tool.`;
 
       if (response.status === 429) {
         return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Rate limit exceeded. Please try again in a moment.",
+            code: "RATE_LIMIT_EXCEEDED",
+            retryable: true,
+          }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
+
       if (response.status === 402) {
         return new Response(
-          JSON.stringify({ error: "AI usage limit reached. Please add credits to your workspace." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "AI usage limit reached. Please add credits to your workspace.",
+            code: "AI_CREDITS_EXHAUSTED",
+            retryable: false,
+          }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
