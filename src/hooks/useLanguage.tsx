@@ -228,6 +228,17 @@ const translations: Record<Language, Record<string, string>> = {
     "upload.saved": "✓ சேமிக்கப்பட்டது",
     "upload.saveSuccess": "மருந்துச்சீட்டு வெற்றிகரமாக சேமிக்கப்பட்டது!",
     "upload.analyzeSuccess": "மருந்துச்சீட்டு வெற்றிகரமாக பகுப்பாய்வு செய்யப்பட்டது!",
+    "upload.manualEntry": "மருந்துச்சீட்டை கைமுறையாக உள்ளிடுங்கள்",
+    "upload.manualSubtitle": "மருந்துச்சீட்டு விவரங்களை கையால் நிரப்பவும்",
+    "upload.addMedicine": "மருந்து சேர்",
+    "upload.removeMedicine": "நீக்கு",
+    "upload.creditError": "AI கிரெடிட்கள் தீர்ந்துவிட்டன",
+    "upload.creditErrorDesc": "உங்கள் AI பயன்பாட்டு வரம்பை அடைந்துவிட்டீர்கள். கீழே மருந்துச்சீட்டு விவரங்களை கைமுறையாக உள்ளிடலாம்.",
+    "upload.rateLimitError": "அதிகமான கோரிக்கைகள்",
+    "upload.rateLimitDesc": "சிறிது நேரம் காத்திருந்து மீண்டும் முயற்சிக்கவும், அல்லது கீழே கைமுறையாக உள்ளிடவும்.",
+    "upload.fillRequired": "மருத்துவர் பெயர் மற்றும் மருத்துவமனை பெயரை நிரப்பவும்",
+    "upload.addOneMed": "குறைந்தது ஒரு மருந்தையாவது சேர்க்கவும்",
+    "upload.summaryPlaceholder": "விருப்பமான குறிப்புகள்",
 
     // Prescriptions
     "rx.title": "மருந்துச்சீட்டு வரலாறு",
