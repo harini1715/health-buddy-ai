@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, FileImage, Loader2, CheckCircle2, Sparkles, AlertCircle, AlertTriangle } from "lucide-react";
+import { Upload, FileImage, Loader2, CheckCircle2, Sparkles, AlertCircle, AlertTriangle, ShieldCheck, ShieldAlert } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,8 @@ interface PrescriptionResult {
   hospitalName: string;
   doctorName: string;
   summary?: string;
+  confidence?: number;
+  warnings?: string[];
   medicines: {
     name: string;
     dosage: string;
@@ -264,6 +266,40 @@ export default function UploadPrescription() {
                       {t("upload.aiSummary")}
                     </p>
                     <p className="text-sm text-foreground">{result.summary}</p>
+                  </div>
+                )}
+
+                {/* Confidence Score */}
+                {result.confidence !== undefined && (
+                  <div className={`flex items-center gap-2 p-3 rounded-xl ${result.confidence >= 80 ? 'bg-success/10' : result.confidence >= 50 ? 'bg-warning/10' : 'bg-destructive/10'}`}>
+                    {result.confidence >= 80 ? (
+                      <ShieldCheck className="h-5 w-5 text-success" />
+                    ) : (
+                      <ShieldAlert className="h-5 w-5 text-warning" />
+                    )}
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        Accuracy Confidence: {result.confidence}%
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {result.confidence >= 80
+                          ? "High confidence — medicines matched against verified database"
+                          : "Some medicines need manual verification"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Drug Interaction Warnings */}
+                {result.warnings && result.warnings.length > 0 && (
+                  <div className="p-4 rounded-xl border border-warning/40 bg-warning/5 space-y-2">
+                    <p className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-warning" />
+                      Drug Interaction Alerts
+                    </p>
+                    {result.warnings.map((w, i) => (
+                      <p key={i} className="text-xs text-muted-foreground ml-6">{w}</p>
+                    ))}
                   </div>
                 )}
 

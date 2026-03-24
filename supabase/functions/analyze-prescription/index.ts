@@ -7,29 +7,28 @@ const corsHeaders = {
 };
 
 // ── Drug Dictionary: ~200 common Indian prescription medicines ──
-// Each entry: [canonical name, common abbreviations/misspellings, category]
 const DRUG_DATABASE: { name: string; aliases: string[]; category: string; commonDosage: string }[] = [
   // Analgesics & Antipyretics
-  { name: "Paracetamol", aliases: ["pcm","paracetamol","paracitamol","parcetamol","dolo","crocin","calpol","p-500","tylenol","acetaminophen"], category: "analgesic", commonDosage: "500mg/650mg" },
+  { name: "Paracetamol", aliases: ["pcm","paracetamol","paracitamol","parcetamol","dolo","crocin","calpol","p-500","tylenol","acetaminophen","dolo-650","dolo650","paracet"], category: "analgesic", commonDosage: "500mg/650mg" },
   { name: "Ibuprofen", aliases: ["ibuprofen","brufen","ibugesic","combiflam-ibu"], category: "NSAID", commonDosage: "400mg" },
   { name: "Diclofenac", aliases: ["diclofenac","voveran","diclo","dynapar","voltaren","diclofenac-sodium"], category: "NSAID", commonDosage: "50mg" },
   { name: "Aceclofenac", aliases: ["aceclofenac","hifenac","zerodol","acemiz"], category: "NSAID", commonDosage: "100mg" },
   { name: "Nimesulide", aliases: ["nimesulide","nice","nise","nimulid"], category: "NSAID", commonDosage: "100mg" },
-  { name: "Mefenamic Acid", aliases: ["mefenamic","meftal","ponstan"], category: "NSAID", commonDosage: "250mg/500mg" },
+  { name: "Mefenamic Acid", aliases: ["mefenamic","meftal","ponstan","mefenamic-acid"], category: "NSAID", commonDosage: "250mg/500mg" },
   { name: "Tramadol", aliases: ["tramadol","ultracet","contramal"], category: "opioid-analgesic", commonDosage: "50mg" },
   { name: "Aspirin", aliases: ["aspirin","ecosprin","disprin","asp"], category: "NSAID", commonDosage: "75mg/150mg/325mg" },
 
   // Antibiotics
-  { name: "Amoxicillin", aliases: ["amoxicillin","amox","amoxyclav","amoxycillin","novamox","mox"], category: "antibiotic", commonDosage: "250mg/500mg" },
+  { name: "Amoxicillin", aliases: ["amoxicillin","amox","amoxyclav","amoxycillin","novamox","mox","amoxil"], category: "antibiotic", commonDosage: "250mg/500mg" },
   { name: "Amoxicillin + Clavulanate", aliases: ["augmentin","amoxyclav","clavam","amoxicillin-clavulanate","amox-clav","moxclav"], category: "antibiotic", commonDosage: "625mg" },
-  { name: "Azithromycin", aliases: ["azithromycin","azithro","azee","zithromax","azicip","azifast"], category: "antibiotic", commonDosage: "250mg/500mg" },
-  { name: "Cefixime", aliases: ["cefixime","cefixim","taxim-o","zifi","cefix","omnix"], category: "antibiotic", commonDosage: "200mg" },
-  { name: "Cephalexin", aliases: ["cephalexin","cefalexin","ceff","keflex","alexin"], category: "antibiotic", commonDosage: "250mg/500mg" },
-  { name: "Ciprofloxacin", aliases: ["ciprofloxacin","cipro","ciplox","cifran"], category: "antibiotic", commonDosage: "250mg/500mg" },
-  { name: "Levofloxacin", aliases: ["levofloxacin","levo","levomac","levoflox","tavanic","glevo"], category: "antibiotic", commonDosage: "250mg/500mg/750mg" },
-  { name: "Ofloxacin", aliases: ["ofloxacin","oflox","zenflox","o2"], category: "antibiotic", commonDosage: "200mg" },
-  { name: "Metronidazole", aliases: ["metronidazole","metro","flagyl","metrogyl","metron"], category: "antibiotic", commonDosage: "200mg/400mg" },
-  { name: "Doxycycline", aliases: ["doxycycline","doxy","doxt","doxylab"], category: "antibiotic", commonDosage: "100mg" },
+  { name: "Azithromycin", aliases: ["azithromycin","azithro","azee","zithromax","azicip","azifast","azithral","azith"], category: "antibiotic", commonDosage: "250mg/500mg" },
+  { name: "Cefixime", aliases: ["cefixime","cefixim","taxim-o","zifi","cefix","omnix","cefspan"], category: "antibiotic", commonDosage: "200mg" },
+  { name: "Cephalexin", aliases: ["cephalexin","cefalexin","ceff","keflex","alexin","sporidex"], category: "antibiotic", commonDosage: "250mg/500mg" },
+  { name: "Ciprofloxacin", aliases: ["ciprofloxacin","cipro","ciplox","cifran","ciprobid"], category: "antibiotic", commonDosage: "250mg/500mg" },
+  { name: "Levofloxacin", aliases: ["levofloxacin","levo","levomac","levoflox","tavanic","glevo","l-cin"], category: "antibiotic", commonDosage: "250mg/500mg/750mg" },
+  { name: "Ofloxacin", aliases: ["ofloxacin","oflox","zenflox","o2","oflo"], category: "antibiotic", commonDosage: "200mg" },
+  { name: "Metronidazole", aliases: ["metronidazole","metro","flagyl","metrogyl","metron","metronid"], category: "antibiotic", commonDosage: "200mg/400mg" },
+  { name: "Doxycycline", aliases: ["doxycycline","doxy","doxt","doxylab","doxybond"], category: "antibiotic", commonDosage: "100mg" },
   { name: "Norfloxacin", aliases: ["norfloxacin","norflox","uroflox"], category: "antibiotic", commonDosage: "400mg" },
   { name: "Cefpodoxime", aliases: ["cefpodoxime","cefpod","cepodem","vantin"], category: "antibiotic", commonDosage: "100mg/200mg" },
   { name: "Ceftriaxone", aliases: ["ceftriaxone","monocef","rocephin","ceftri"], category: "antibiotic", commonDosage: "1g" },
@@ -39,7 +38,7 @@ const DRUG_DATABASE: { name: string; aliases: string[]; category: string; common
   { name: "Cotrimoxazole", aliases: ["cotrimoxazole","bactrim","septran","tmp-smx","trimethoprim"], category: "antibiotic", commonDosage: "DS" },
 
   // Gastrointestinal
-  { name: "Pantoprazole", aliases: ["pantoprazole","panto","pan","pan-40","pantop","pantocid","p-40"], category: "PPI", commonDosage: "40mg" },
+  { name: "Pantoprazole", aliases: ["pantoprazole","panto","pan","pan-40","pantop","pantocid","p-40","pantium"], category: "PPI", commonDosage: "40mg" },
   { name: "Omeprazole", aliases: ["omeprazole","omez","omee","prilosec"], category: "PPI", commonDosage: "20mg" },
   { name: "Rabeprazole", aliases: ["rabeprazole","razo","rabeloc","rablet","rabicip"], category: "PPI", commonDosage: "20mg" },
   { name: "Esomeprazole", aliases: ["esomeprazole","nexium","neksium","sompraz","raciper"], category: "PPI", commonDosage: "20mg/40mg" },
@@ -64,9 +63,9 @@ const DRUG_DATABASE: { name: string; aliases: string[]; category: string; common
   { name: "Cetirizine", aliases: ["cetirizine","cetzine","cetriz","zyrtec","okacet","allercet"], category: "antihistamine", commonDosage: "10mg" },
   { name: "Levocetirizine", aliases: ["levocetirizine","levocet","xyzal","vozet","lcz"], category: "antihistamine", commonDosage: "5mg" },
   { name: "Fexofenadine", aliases: ["fexofenadine","allegra","fexo","altiva"], category: "antihistamine", commonDosage: "120mg/180mg" },
-  { name: "Chlorpheniramine", aliases: ["chlorpheniramine","cpm","piriton","avil-cpm"], category: "antihistamine", commonDosage: "4mg" },
+  { name: "Chlorpheniramine", aliases: ["chlorpheniramine","cpm","piriton","avil-cpm","cpam"], category: "antihistamine", commonDosage: "4mg" },
   { name: "Loratadine", aliases: ["loratadine","claritin","lorfast"], category: "antihistamine", commonDosage: "10mg" },
-  { name: "Montelukast", aliases: ["montelukast","montair","singulair","montek","romilast","monte"], category: "anti-allergic", commonDosage: "10mg" },
+  { name: "Montelukast", aliases: ["montelukast","montair","singulair","montek","romilast","monte","montelu"], category: "anti-allergic", commonDosage: "10mg" },
   { name: "Montelukast + Levocetirizine", aliases: ["montair-lc","montek-lc","montelukast-lc","monte-lc","montel-lc"], category: "anti-allergic", commonDosage: "10mg+5mg" },
 
   // Respiratory
@@ -200,6 +199,18 @@ const DRUG_DATABASE: { name: string; aliases: string[]; category: string; common
   { name: "Hydroxychloroquine", aliases: ["hydroxychloroquine","hcq","hcqs","plaquenil"], category: "DMARD", commonDosage: "200mg/400mg" },
 ];
 
+// ── Non-medicine words to filter out (headers, instructions, noise) ──
+const NON_MEDICINE_WORDS = new Set([
+  "tablet", "capsule", "syrup", "injection", "cream", "ointment", "drops",
+  "diagnosis", "complaint", "history", "follow", "advice", "rest", "water",
+  "exercise", "diet", "review", "next", "visit", "days", "weeks", "months",
+  "patient", "name", "age", "sex", "male", "female", "date", "rx", "sig",
+  "take", "apply", "use", "give", "stat", "sos", "prn", "od", "bd", "tds",
+  "qid", "hs", "ac", "pc", "morning", "night", "evening", "afternoon",
+  "before", "after", "food", "meals", "empty", "stomach", "oral", "topical",
+  "external", "internal", "tab", "cap", "inj", "syr", "susp", "dr", "prof",
+]);
+
 // ── Normalize text for matching ──
 function normalize(text: string): string {
   return text
@@ -226,70 +237,118 @@ function levenshtein(a: string, b: string): number {
 }
 
 // ── Match a medicine name against the drug dictionary ──
-function matchDrug(rawName: string): { matched: boolean; name: string; category: string; confidence: string } {
+function matchDrug(rawName: string): { matched: boolean; name: string; category: string; confidence: number; matchType: string } {
   const norm = normalize(rawName);
-  if (!norm) return { matched: false, name: rawName, category: "unknown", confidence: "none" };
+  if (!norm || norm.length < 3) return { matched: false, name: rawName, category: "unknown", confidence: 0, matchType: "none" };
 
-  // 1. Exact alias match
+  // Filter out obvious non-medicine words
+  const words = rawName.toLowerCase().split(/\s+/);
+  const allNonMed = words.every(w => NON_MEDICINE_WORDS.has(w.replace(/[^a-z]/g, "")));
+  if (allNonMed && words.length <= 2) {
+    return { matched: false, name: rawName, category: "noise", confidence: 0, matchType: "filtered" };
+  }
+
+  // 1. Exact alias match → confidence 1.0
   for (const drug of DRUG_DATABASE) {
     for (const alias of drug.aliases) {
       if (normalize(alias) === norm) {
-        return { matched: true, name: drug.name, category: drug.category, confidence: "exact" };
+        return { matched: true, name: drug.name, category: drug.category, confidence: 1.0, matchType: "exact" };
       }
     }
   }
 
-  // 2. Substring/contains match
+  // 2. Substring/contains match → confidence 0.85
   for (const drug of DRUG_DATABASE) {
     for (const alias of drug.aliases) {
       const normAlias = normalize(alias);
       if (norm.includes(normAlias) || normAlias.includes(norm)) {
         if (Math.min(norm.length, normAlias.length) >= 3) {
-          return { matched: true, name: drug.name, category: drug.category, confidence: "substring" };
+          return { matched: true, name: drug.name, category: drug.category, confidence: 0.85, matchType: "substring" };
         }
       }
     }
   }
 
-  // 3. Fuzzy match (Levenshtein distance ≤ 2 for short names, ≤ 3 for longer)
+  // 3. Fuzzy match (Levenshtein) → confidence based on distance
   let bestMatch: typeof DRUG_DATABASE[0] | null = null;
   let bestDist = Infinity;
-  let bestAlias = "";
 
   for (const drug of DRUG_DATABASE) {
     for (const alias of drug.aliases) {
       const normAlias = normalize(alias);
       const dist = levenshtein(norm, normAlias);
-      const threshold = Math.max(normAlias.length, norm.length) > 6 ? 3 : 2;
+      const maxLen = Math.max(normAlias.length, norm.length);
+      const threshold = maxLen > 8 ? 3 : maxLen > 5 ? 2 : 1;
       if (dist <= threshold && dist < bestDist) {
         bestDist = dist;
         bestMatch = drug;
-        bestAlias = alias;
       }
     }
   }
 
   if (bestMatch) {
-    return { matched: true, name: bestMatch.name, category: bestMatch.category, confidence: "fuzzy" };
+    const maxLen = Math.max(norm.length, 1);
+    const confidence = Math.max(0.5, 1 - (bestDist / maxLen));
+    return { matched: true, name: bestMatch.name, category: bestMatch.category, confidence, matchType: "fuzzy" };
   }
 
-  return { matched: false, name: rawName, category: "unknown", confidence: "none" };
+  return { matched: false, name: rawName, category: "unknown", confidence: 0, matchType: "none" };
+}
+
+// ── Normalize dosage patterns (Indian prescription style) ──
+function normalizeDosagePattern(dosage: string): { normalized: string; frequency: string | null } {
+  const d = dosage.trim();
+
+  // Match X-Y-Z pattern (e.g., 1-0-1, 1-1-1, 0-0-1)
+  const xyzMatch = d.match(/(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)/);
+  if (xyzMatch) {
+    const [, m, a, n] = xyzMatch;
+    const slots: string[] = [];
+    if (parseFloat(m) > 0) slots.push("Morning");
+    if (parseFloat(a) > 0) slots.push("Afternoon");
+    if (parseFloat(n) > 0) slots.push("Night");
+    return { normalized: d, frequency: slots.length > 0 ? slots.join(" & ") : null };
+  }
+
+  return { normalized: d, frequency: null };
 }
 
 // ── Normalize timing strings ──
-function normalizeTiming(timing: string): string {
+function normalizeTiming(timing: string, dosage?: string): string {
+  // First check if dosage has X-Y-Z pattern
+  if (dosage) {
+    const { frequency } = normalizeDosagePattern(dosage);
+    if (frequency) return frequency;
+  }
+
   const t = timing.toLowerCase();
   const slots: string[] = [];
-  if (t.includes("morn") || t.includes("am") || t.includes("breakfast")) slots.push("Morning");
-  if (t.includes("after") || t.includes("noon") || t.includes("lunch")) slots.push("Afternoon");
-  if (t.includes("night") || t.includes("evening") || t.includes("bed") || t.includes("dinner") || t.includes("pm")) slots.push("Night");
+
+  // Check common abbreviations first
+  if (/\bsos\b/i.test(t)) return "As needed (SOS)";
+  if (/\bstat\b/i.test(t)) return "Immediately (STAT)";
+  if (/\bprn\b/i.test(t)) return "As needed";
+
+  if (t.includes("morn") || /\bam\b/.test(t) || t.includes("breakfast")) slots.push("Morning");
+  if (t.includes("after") && t.includes("noon") || t.includes("lunch")) slots.push("Afternoon");
+  if (t.includes("night") || t.includes("evening") || t.includes("bed") || t.includes("dinner") || /\bpm\b/.test(t)) slots.push("Night");
+
   if (t.includes("once") && t.includes("daily") && slots.length === 0) slots.push("Once daily");
-  if (t.includes("twice") || t.includes("bd") || t.includes("bid")) {
+  if (/\bod\b/.test(t) && slots.length === 0) slots.push("Once daily");
+  if (/\bbd\b/.test(t) || /\bbid\b/.test(t) || t.includes("twice")) {
     if (slots.length === 0) { slots.push("Morning"); slots.push("Night"); }
   }
-  if (t.includes("thrice") || t.includes("tds") || t.includes("tid")) {
+  if (/\btds\b/.test(t) || /\btid\b/.test(t) || t.includes("thrice")) {
     if (slots.length === 0) { slots.push("Morning"); slots.push("Afternoon"); slots.push("Night"); }
   }
+  if (/\bqid\b/.test(t)) {
+    return "4 times daily";
+  }
+  if (/\bhs\b/.test(t) || t.includes("bedtime")) {
+    if (slots.length === 0) slots.push("At bedtime");
+  }
+  if (/\bweekly\b/.test(t)) return "Once weekly";
+
   if (slots.length === 0) return timing; // keep original if unrecognized
   return slots.join(" & ");
 }
@@ -297,19 +356,58 @@ function normalizeTiming(timing: string): string {
 // ── Normalize food instructions ──
 function normalizeFood(food: string): string {
   const f = food.toLowerCase();
-  if (f.includes("before")) return "Before food";
-  if (f.includes("after")) return "After food";
+  if (/\bac\b/.test(f) || f.includes("before")) return "Before food";
+  if (/\bpc\b/.test(f) || f.includes("after")) return "After food";
   if (f.includes("with")) return "With food";
   if (f.includes("empty")) return "On empty stomach";
   return food || "N/A";
 }
 
-// ── Extract duration from dosage or timing text ──
+// ── Extract duration from text ──
 function extractDuration(text: string): string | null {
-  // Match patterns like "5 days", "for 7 days", "x 10 days", circled numbers
-  const durationMatch = text.match(/(\d+)\s*(days?|weeks?|months?)/i);
+  // Match "5 days", "for 7 days", "x 10 days", "2 weeks", "1 month"
+  const durationMatch = text.match(/(?:for\s+|x\s+)?(\d+)\s*(days?|weeks?|months?)/i);
   if (durationMatch) return `${durationMatch[1]} ${durationMatch[2].toLowerCase()}`;
+
+  // Match circled numbers (AI might describe them as e.g., "(5)" or "⑤")
+  const circledMatch = text.match(/[⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮]/);
+  if (circledMatch) {
+    const circledMap: Record<string, number> = { "⓪": 0, "①": 1, "②": 2, "③": 3, "④": 4, "⑤": 5, "⑥": 6, "⑦": 7, "⑧": 8, "⑨": 9, "⑩": 10, "⑪": 11, "⑫": 12, "⑬": 13, "⑭": 14, "⑮": 15 };
+    const num = circledMap[circledMatch[0]];
+    if (num) return `${num} days`;
+  }
+
+  // Match parenthesized numbers often used for duration
+  const parenMatch = text.match(/\((\d+)\)\s*(?:days?)?/i);
+  if (parenMatch) return `${parenMatch[1]} days`;
+
   return null;
+}
+
+// ── Medical context validation ──
+// Flag potentially dangerous combinations
+const INTERACTION_WARNINGS: [string, string, string][] = [
+  ["NSAID", "anticoagulant", "⚠️ NSAID + Anticoagulant: bleeding risk"],
+  ["NSAID", "NSAID", "⚠️ Multiple NSAIDs: increased GI/renal risk"],
+  ["ACE-inhibitor", "ARB", "⚠️ ACE + ARB: hyperkalemia risk"],
+  ["statin", "statin", "⚠️ Multiple statins: muscle toxicity risk"],
+];
+
+function checkInteractions(medicines: { category: string; name: string }[]): string[] {
+  const warnings: string[] = [];
+  for (let i = 0; i < medicines.length; i++) {
+    for (let j = i + 1; j < medicines.length; j++) {
+      for (const [cat1, cat2, warning] of INTERACTION_WARNINGS) {
+        if (
+          (medicines[i].category === cat1 && medicines[j].category === cat2) ||
+          (medicines[i].category === cat2 && medicines[j].category === cat1)
+        ) {
+          warnings.push(`${warning} (${medicines[i].name} + ${medicines[j].name})`);
+        }
+      }
+    }
+  }
+  return warnings;
 }
 
 // ── Post-process extracted data ──
@@ -322,9 +420,12 @@ function postProcess(extracted: {
 }) {
   const validatedMedicines = extracted.medicines.map((med) => {
     const match = matchDrug(med.name);
-    
+
+    // Skip noise entries
+    if (match.matchType === "filtered") return null;
+
     // Extract strength from original name if present
-    const strengthMatch = med.name.match(/(\d+\s*(?:mg|mcg|ml|g|iu|units?)(?:\s*\/\s*\d+\s*(?:mg|mcg|ml|g|iu|units?))?)/i);
+    const strengthMatch = med.name.match(/(\d+(?:\.\d+)?\s*(?:mg|mcg|ml|g|iu|units?)(?:\s*\/\s*\d+(?:\.\d+)?\s*(?:mg|mcg|ml|g|iu|units?))?)/i);
     const strength = strengthMatch ? ` ${strengthMatch[1].trim()}` : "";
 
     // Extract form from original name
@@ -335,22 +436,26 @@ function postProcess(extracted: {
       ? `${match.name}${strength}${form}`
       : med.name;
 
-    const duration = extractDuration(med.dosage) || extractDuration(med.timing);
+    const duration = extractDuration(med.dosage) || extractDuration(med.timing) || extractDuration(med.name);
 
     return {
       name: correctedName,
       dosage: med.dosage,
-      timing: normalizeTiming(med.timing),
+      timing: normalizeTiming(med.timing, med.dosage),
       food: normalizeFood(med.food),
       ...(duration ? { duration } : {}),
       _validation: {
         originalName: med.name,
         matched: match.matched,
         confidence: match.confidence,
+        matchType: match.matchType,
         category: match.category,
       },
     };
-  });
+  }).filter(Boolean) as Array<{
+    name: string; dosage: string; timing: string; food: string; duration?: string;
+    _validation: { originalName: string; matched: boolean; confidence: number; matchType: string; category: string };
+  }>;
 
   // Remove duplicates (same corrected name)
   const seen = new Set<string>();
@@ -360,6 +465,19 @@ function postProcess(extracted: {
     seen.add(key);
     return true;
   });
+
+  // Check drug interactions
+  const matchedMeds = deduplicated
+    .filter(m => m._validation.matched)
+    .map(m => ({ category: m._validation.category, name: m.name }));
+  const interactions = checkInteractions(matchedMeds);
+
+  // Compute overall confidence
+  const confidences = deduplicated.map(m => m._validation.confidence);
+  const avgConfidence = confidences.length > 0
+    ? confidences.reduce((a, b) => a + b, 0) / confidences.length
+    : 0;
+  const lowConfidenceItems = deduplicated.filter(m => m._validation.confidence < 0.7 && m._validation.confidence > 0);
 
   return {
     date: extracted.date || new Date().toISOString().split("T")[0],
@@ -372,6 +490,9 @@ function postProcess(extracted: {
       validated: deduplicated.filter((m) => m._validation.matched).length,
       unmatched: deduplicated.filter((m) => !m._validation.matched).length,
       deduplicated: validatedMedicines.length - deduplicated.length,
+      avgConfidence: Math.round(avgConfidence * 100),
+      lowConfidenceCount: lowConfidenceItems.length,
+      interactions,
     },
   };
 }
@@ -396,18 +517,30 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are an expert medical prescription OCR AI. Extract EXACTLY what is written on the prescription image.
+    const systemPrompt = `You are an expert medical prescription OCR AI specialized in Indian prescriptions (handwritten & printed).
 
-CRITICAL RULES:
-1. READ the image carefully. Extract medicine names EXACTLY as printed/written — do NOT guess or substitute.
-2. If a name is partially readable, output what you can see (e.g., "Melt 4mg" → output "Melt 4mg", NOT "Montelukast").
-3. Include strength (mg, mcg, ml) and form (tablet, capsule, syrup) if visible.
-4. For timing: extract exactly — "1-0-1" means Morning & Night, "1-1-1" means Morning, Afternoon & Night, "0-0-1" means Night only.
-5. For food instructions: look for "AC" (before food), "PC" (after food), or written instructions.
-6. Look for circled numbers which often indicate duration in days.
-7. Extract ALL medicines — do not skip any line items.
+CRITICAL EXTRACTION RULES:
+1. READ the image meticulously. Extract medicine names EXACTLY as printed/written — do NOT guess, invent, or substitute medicine names.
+2. If a name is partially readable, output what you can see verbatim (e.g., "Melt 4mg" → output "Melt 4mg", NOT "Montelukast").
+3. Include strength (mg, mcg, ml) and form (tablet, capsule, syrup) ONLY if clearly visible on the prescription.
+4. For timing patterns:
+   - "1-0-1" = Morning & Night
+   - "1-1-1" = Morning, Afternoon & Night
+   - "0-0-1" = Night only
+   - "1-0-0" = Morning only
+   - "BD" = Twice daily, "OD" = Once daily, "TDS" = Thrice daily, "QID" = 4 times daily
+   - "SOS" = As needed, "STAT" = Immediately, "HS" = At bedtime
+5. For food instructions:
+   - "AC" or "A/C" = Before food (Ante Cibum)
+   - "PC" or "P/C" = After food (Post Cibum)
+   - If not specified, output "N/A"
+6. Look for circled numbers or numbers in boxes which indicate duration in days.
+7. Extract ALL medicine lines — do not skip any. Count items and verify you haven't missed any.
+8. Do NOT include non-medicine text like diagnosis, advice, patient name, or instructions as medicines.
+9. If the image is unclear or partially visible, still extract what is legible. Mark unclear parts.
+10. For combination drugs (e.g., "Augmentin" = Amoxicillin+Clavulanate), use the brand name as written.
 
-Return data using the extract_prescription tool.`;
+IMPORTANT: Only output what you can actually read. Zero hallucination tolerance.`;
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -432,7 +565,7 @@ Return data using the extract_prescription tool.`;
                 },
                 {
                   type: "text",
-                  text: "Extract all prescription details from this image. Read carefully and output exactly what you see.",
+                  text: "Extract ALL prescription details from this image. Read every medicine line carefully. Output exactly what is written — do not guess or substitute names. Count the medicines to ensure none are missed.",
                 },
               ],
             },
@@ -442,23 +575,24 @@ Return data using the extract_prescription tool.`;
               type: "function",
               function: {
                 name: "extract_prescription",
-                description: "Extract structured prescription data from the image",
+                description: "Extract structured prescription data from the image. Only include actual medicines, not diagnosis or advice text.",
                 parameters: {
                   type: "object",
                   properties: {
-                    date: { type: "string", description: "Prescription date YYYY-MM-DD" },
-                    hospitalName: { type: "string", description: "Hospital or clinic name" },
-                    doctorName: { type: "string", description: "Doctor name with qualifications" },
-                    summary: { type: "string", description: "Brief clinical summary" },
+                    date: { type: "string", description: "Prescription date in YYYY-MM-DD format. If unclear, use today's date." },
+                    hospitalName: { type: "string", description: "Hospital or clinic name as printed on the header" },
+                    doctorName: { type: "string", description: "Doctor name with qualifications (e.g., Dr. X, MBBS, MD)" },
+                    summary: { type: "string", description: "Brief clinical summary including diagnosis if visible" },
                     medicines: {
                       type: "array",
+                      description: "List of ALL medicines on the prescription. Do not skip any.",
                       items: {
                         type: "object",
                         properties: {
-                          name: { type: "string", description: "Medicine name exactly as written, with strength" },
-                          dosage: { type: "string", description: "Dosage amount and duration if visible" },
-                          timing: { type: "string", description: "When to take (e.g., 1-0-1, Morning & Night)" },
-                          food: { type: "string", description: "Before food, After food, or N/A" },
+                          name: { type: "string", description: "Medicine name EXACTLY as written, including strength if visible (e.g., 'Dolo 650', 'Augmentin 625'). Do NOT correct or substitute." },
+                          dosage: { type: "string", description: "Dosage pattern like '1-0-1', '1 tablet', or amount. Include duration if on same line." },
+                          timing: { type: "string", description: "When to take: Morning/Afternoon/Night, BD, OD, TDS, SOS, etc." },
+                          food: { type: "string", description: "AC (before food), PC (after food), with food, or N/A if not specified" },
                         },
                         required: ["name", "dosage", "timing", "food"],
                         additionalProperties: false,
@@ -550,11 +684,14 @@ Return data using the extract_prescription tool.`;
 
     // ── POST-PROCESSING PIPELINE ──
     const validated = postProcess(extracted);
-    
+
     console.log("Validation stats:", JSON.stringify(validated._stats));
-    console.log("Medicines:", validated.medicines.map(m => 
-      `${m._validation.originalName} → ${m.name} [${m._validation.confidence}]`
+    console.log("Medicines:", validated.medicines.map(m =>
+      `${m._validation.originalName} → ${m.name} [${m._validation.matchType}:${m._validation.confidence}]`
     ).join(" | "));
+    if (validated._stats.interactions.length > 0) {
+      console.log("⚠️ Drug interactions:", validated._stats.interactions.join("; "));
+    }
 
     // Clean internal metadata before sending to client
     const clientResponse = {
@@ -563,6 +700,8 @@ Return data using the extract_prescription tool.`;
       doctorName: validated.doctorName,
       summary: validated.summary,
       medicines: validated.medicines.map(({ _validation, ...rest }) => rest),
+      confidence: validated._stats.avgConfidence,
+      warnings: validated._stats.interactions,
     };
 
     return new Response(JSON.stringify(clientResponse), {
