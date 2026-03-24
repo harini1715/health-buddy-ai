@@ -14,6 +14,8 @@ interface PrescriptionResult {
   hospitalName: string;
   doctorName: string;
   summary?: string;
+  confidence?: number;
+  warnings?: string[];
   medicines: {
     name: string;
     dosage: string;
