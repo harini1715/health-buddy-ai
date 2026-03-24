@@ -30,7 +30,9 @@ export default function UploadPrescription() {
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<PrescriptionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<"credit" | "rateLimit" | "generic" | null>(null);
   const [saved, setSaved] = useState(false);
+  const [showManualForm, setShowManualForm] = useState(false);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
