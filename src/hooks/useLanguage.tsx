@@ -522,6 +522,17 @@ const translations: Record<Language, Record<string, string>> = {
     "upload.saved": "✓ సేవ్ అయింది",
     "upload.saveSuccess": "ప్రిస్క్రిప్షన్ విజయవంతంగా సేవ్ అయింది!",
     "upload.analyzeSuccess": "ప్రిస్క్రిప్షన్ విజయవంతంగా విశ్లేషించబడింది!",
+    "upload.manualEntry": "ప్రిస్క్రిప్షన్ మాన్యువల్‌గా నమోదు చేయండి",
+    "upload.manualSubtitle": "ప్రిస్క్రిప్షన్ వివరాలను చేతితో నింపండి",
+    "upload.addMedicine": "మందు జోడించు",
+    "upload.removeMedicine": "తొలగించు",
+    "upload.creditError": "AI క్రెడిట్లు అయిపోయాయి",
+    "upload.creditErrorDesc": "మీ AI వాడకం పరిమితి చేరుకుంది. క్రింద ప్రిస్క్రిప్షన్ వివరాలను మాన్యువల్‌గా నమోదు చేయవచ్చు.",
+    "upload.rateLimitError": "చాలా ఎక్కువ అభ్యర్థనలు",
+    "upload.rateLimitDesc": "దయచేసి కొంచెం ఆగి మళ్లీ ప్రయత్నించండి, లేదా క్రింద మాన్యువల్‌గా నమోదు చేయండి.",
+    "upload.fillRequired": "దయచేసి డాక్టర్ పేరు మరియు ఆసుపత్రి పేరు నింపండి",
+    "upload.addOneMed": "దయచేసి కనీసం ఒక మందును జోడించండి",
+    "upload.summaryPlaceholder": "ఐచ్ఛిక నోట్స్ లేదా సారాంశం",
 
     // Prescriptions
     "rx.title": "ప్రిస్క్రిప్షన్ చరిత్ర",

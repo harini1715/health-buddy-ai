@@ -186,17 +186,47 @@ export default function UploadPrescription() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
+            className="space-y-4"
           >
-            <Card className="shadow-card border-destructive/30">
-              <CardContent className="flex items-center gap-3 py-6">
-                <AlertCircle className="h-6 w-6 text-destructive shrink-0" />
-                <div>
-                  <p className="font-semibold text-foreground">{t("upload.failed")}</p>
-                  <p className="text-sm text-muted-foreground">{error}</p>
-                </div>
-              </CardContent>
-            </Card>
+            {errorType === "credit" ? (
+              <Card className="shadow-card border-warning/40 bg-warning/5">
+                <CardContent className="flex items-start gap-3 py-6">
+                  <AlertTriangle className="h-6 w-6 text-warning shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-foreground">{t("upload.creditError")}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{t("upload.creditErrorDesc")}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : errorType === "rateLimit" ? (
+              <Card className="shadow-card border-warning/40 bg-warning/5">
+                <CardContent className="flex items-start gap-3 py-6">
+                  <AlertTriangle className="h-6 w-6 text-warning shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-foreground">{t("upload.rateLimitError")}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{t("upload.rateLimitDesc")}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="shadow-card border-destructive/30">
+                <CardContent className="flex items-center gap-3 py-6">
+                  <AlertCircle className="h-6 w-6 text-destructive shrink-0" />
+                  <div>
+                    <p className="font-semibold text-foreground">{t("upload.failed")}</p>
+                    <p className="text-sm text-muted-foreground">{error}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Manual Entry Fallback */}
+      <AnimatePresence>
+        {showManualForm && !processing && !result && (
+          <ManualPrescriptionForm />
         )}
       </AnimatePresence>
 
