@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, FileImage, Loader2, CheckCircle2, Sparkles, AlertCircle } from "lucide-react";
+import { Upload, FileImage, Loader2, CheckCircle2, Sparkles, AlertCircle, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/hooks/useLanguage";
+import ManualPrescriptionForm from "@/components/ManualPrescriptionForm";
 
 interface PrescriptionResult {
   date: string;
@@ -29,7 +30,9 @@ export default function UploadPrescription() {
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<PrescriptionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<"credit" | "rateLimit" | "generic" | null>(null);
   const [saved, setSaved] = useState(false);
+  const [showManualForm, setShowManualForm] = useState(false);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -55,7 +58,9 @@ export default function UploadPrescription() {
     setFile(f);
     setProcessing(true);
     setError(null);
+    setErrorType(null);
     setSaved(false);
+    setShowManualForm(false);
 
     try {
       const imageBase64 = await fileToBase64(f);
@@ -79,7 +84,17 @@ export default function UploadPrescription() {
       toast.success("Prescription analyzed successfully!");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to process prescription";
+      // Detect billing / rate-limit errors
+      const msgLower = msg.toLowerCase();
+      if (msgLower.includes("402") || msgLower.includes("payment") || msgLower.includes("credit") || msgLower.includes("insufficient")) {
+        setErrorType("credit");
+      } else if (msgLower.includes("429") || msgLower.includes("rate limit") || msgLower.includes("too many")) {
+        setErrorType("rateLimit");
+      } else {
+        setErrorType("generic");
+      }
       setError(msg);
+      setShowManualForm(true);
       toast.error(msg);
     } finally {
       setProcessing(false);
@@ -171,17 +186,47 @@ export default function UploadPrescription() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
+            className="space-y-4"
           >
-            <Card className="shadow-card border-destructive/30">
-              <CardContent className="flex items-center gap-3 py-6">
-                <AlertCircle className="h-6 w-6 text-destructive shrink-0" />
-                <div>
-                  <p className="font-semibold text-foreground">{t("upload.failed")}</p>
-                  <p className="text-sm text-muted-foreground">{error}</p>
-                </div>
-              </CardContent>
-            </Card>
+            {errorType === "credit" ? (
+              <Card className="shadow-card border-warning/40 bg-warning/5">
+                <CardContent className="flex items-start gap-3 py-6">
+                  <AlertTriangle className="h-6 w-6 text-warning shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-foreground">{t("upload.creditError")}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{t("upload.creditErrorDesc")}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : errorType === "rateLimit" ? (
+              <Card className="shadow-card border-warning/40 bg-warning/5">
+                <CardContent className="flex items-start gap-3 py-6">
+                  <AlertTriangle className="h-6 w-6 text-warning shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-foreground">{t("upload.rateLimitError")}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{t("upload.rateLimitDesc")}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="shadow-card border-destructive/30">
+                <CardContent className="flex items-center gap-3 py-6">
+                  <AlertCircle className="h-6 w-6 text-destructive shrink-0" />
+                  <div>
+                    <p className="font-semibold text-foreground">{t("upload.failed")}</p>
+                    <p className="text-sm text-muted-foreground">{error}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Manual Entry Fallback */}
+      <AnimatePresence>
+        {showManualForm && !processing && !result && (
+          <ManualPrescriptionForm />
         )}
       </AnimatePresence>
 
