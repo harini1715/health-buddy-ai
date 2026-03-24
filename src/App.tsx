@@ -63,6 +63,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/*" element={<ProtectedRoutes />} />
           </Routes>
+          <PWAInstallPrompt />
         </BrowserRouter>
       </TooltipProvider>
     </LanguageProvider>
