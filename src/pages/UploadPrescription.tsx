@@ -84,7 +84,17 @@ export default function UploadPrescription() {
       toast.success("Prescription analyzed successfully!");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to process prescription";
+      // Detect billing / rate-limit errors
+      const msgLower = msg.toLowerCase();
+      if (msgLower.includes("402") || msgLower.includes("payment") || msgLower.includes("credit") || msgLower.includes("insufficient")) {
+        setErrorType("credit");
+      } else if (msgLower.includes("429") || msgLower.includes("rate limit") || msgLower.includes("too many")) {
+        setErrorType("rateLimit");
+      } else {
+        setErrorType("generic");
+      }
       setError(msg);
+      setShowManualForm(true);
       toast.error(msg);
     } finally {
       setProcessing(false);
