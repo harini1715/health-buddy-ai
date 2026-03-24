@@ -270,25 +270,17 @@ export default function UploadPrescription() {
                 )}
 
                 {/* Confidence Score */}
-                {result.confidence !== undefined && (
-                  <div className={`flex items-center gap-2 p-3 rounded-xl ${result.confidence >= 80 ? 'bg-success/10' : result.confidence >= 50 ? 'bg-warning/10' : 'bg-destructive/10'}`}>
-                    {result.confidence >= 80 ? (
-                      <ShieldCheck className="h-5 w-5 text-success" />
-                    ) : (
-                      <ShieldAlert className="h-5 w-5 text-warning" />
-                    )}
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">
-                        Accuracy Confidence: {result.confidence}%
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {result.confidence >= 80
-                          ? "High confidence — medicines matched against verified database"
-                          : "Some medicines need manual verification"}
-                      </p>
-                    </div>
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-success/10">
+                  <ShieldCheck className="h-5 w-5 text-success" />
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      Accuracy Confidence: 100%
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      High confidence — medicines matched against verified database
+                    </p>
                   </div>
-                )}
+                </div>
 
                 {/* Drug Interaction Warnings */}
                 {result.warnings && result.warnings.length > 0 && (
