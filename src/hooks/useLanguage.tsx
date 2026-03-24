@@ -81,6 +81,17 @@ const translations: Record<Language, Record<string, string>> = {
     "upload.saved": "✓ Saved",
     "upload.saveSuccess": "Prescription saved successfully!",
     "upload.analyzeSuccess": "Prescription analyzed successfully!",
+    "upload.manualEntry": "Enter Prescription Manually",
+    "upload.manualSubtitle": "Fill in the prescription details by hand",
+    "upload.addMedicine": "Add Medicine",
+    "upload.removeMedicine": "Remove",
+    "upload.creditError": "AI Credits Exhausted",
+    "upload.creditErrorDesc": "Your AI usage limit has been reached. You can enter prescription details manually below.",
+    "upload.rateLimitError": "Too Many Requests",
+    "upload.rateLimitDesc": "Please wait a moment and try again, or enter details manually below.",
+    "upload.fillRequired": "Please fill doctor name and hospital name",
+    "upload.addOneMed": "Please add at least one medicine",
+    "upload.summaryPlaceholder": "Optional notes or summary",
 
     // Prescriptions
     "rx.title": "Prescription History",
