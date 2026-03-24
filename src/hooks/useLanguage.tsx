@@ -375,6 +375,17 @@ const translations: Record<Language, Record<string, string>> = {
     "upload.saved": "✓ सहेजा गया",
     "upload.saveSuccess": "पर्चा सफलतापूर्वक सहेजा गया!",
     "upload.analyzeSuccess": "पर्चे का विश्लेषण सफलतापूर्वक हुआ!",
+    "upload.manualEntry": "पर्चा मैन्युअल रूप से दर्ज करें",
+    "upload.manualSubtitle": "पर्चे का विवरण हाथ से भरें",
+    "upload.addMedicine": "दवा जोड़ें",
+    "upload.removeMedicine": "हटाएं",
+    "upload.creditError": "AI क्रेडिट समाप्त",
+    "upload.creditErrorDesc": "आपकी AI उपयोग सीमा पूरी हो गई है। नीचे पर्चे का विवरण मैन्युअल रूप से दर्ज कर सकते हैं।",
+    "upload.rateLimitError": "बहुत अधिक अनुरोध",
+    "upload.rateLimitDesc": "कृपया थोड़ी देर प्रतीक्षा करें और पुनः प्रयास करें, या नीचे मैन्युअल रूप से दर्ज करें।",
+    "upload.fillRequired": "कृपया डॉक्टर का नाम और अस्पताल का नाम भरें",
+    "upload.addOneMed": "कृपया कम से कम एक दवा जोड़ें",
+    "upload.summaryPlaceholder": "वैकल्पिक नोट्स या सारांश",
 
     // Prescriptions
     "rx.title": "पर्चे का इतिहास",
