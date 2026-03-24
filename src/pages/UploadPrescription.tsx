@@ -58,7 +58,9 @@ export default function UploadPrescription() {
     setFile(f);
     setProcessing(true);
     setError(null);
+    setErrorType(null);
     setSaved(false);
+    setShowManualForm(false);
 
     try {
       const imageBase64 = await fileToBase64(f);
